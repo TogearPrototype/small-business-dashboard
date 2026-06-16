@@ -32,12 +32,48 @@ export interface Tenant {
   /** Optional connected custom domain, e.g. "book.lumenstudio.com". */
   customDomain: string | null;
   address: string;
+  /** Public contact phone, e.g. "(415) 555-0100". */
+  phone: string;
+  /** Public contact email, e.g. "hello@lumenstudio.com". */
+  email: string;
   timezone: string;
   /** Operating window for the calendar grid, 24h "HH:MM". */
   openTime: string;
   closeTime: string;
   /** Hours before an appointment that free cancellation/reschedule ends. */
   cancellationWindowHours: number;
+}
+
+/**
+ * Per-weekday opening schedule. Array of length 7, indexed by JS weekday
+ * (0 = Sun … 6 = Sat). When `open` is false the business is closed that day
+ * and start/end are ignored. Times are 24h "HH:MM".
+ */
+export type BusinessHours = Array<{
+  open: boolean;
+  start: string;
+  end: string;
+}>;
+
+/** Customer-facing notification settings for confirmations and reminders. */
+export interface NotificationPrefs {
+  emailConfirmations: boolean;
+  smsReminders: boolean;
+  /** Hours before the appointment that reminders are sent. */
+  reminderLeadHours: number;
+  emailReminders: boolean;
+  marketingEmails: boolean;
+}
+
+/** Payment / deposit configuration for the booking flow. */
+export interface PaymentSettings {
+  stripeConnected: boolean;
+  /** ISO 4217 currency code, e.g. "USD". */
+  currency: string;
+  requireDeposit: boolean;
+  /** Deposit as a percentage of the service price (0–100). */
+  depositPercent: number;
+  collectAtBooking: boolean;
 }
 
 export interface Staff {

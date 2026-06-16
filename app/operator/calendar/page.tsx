@@ -16,7 +16,13 @@ type View = "day" | "week";
 export default async function CalendarPage({
   searchParams,
 }: {
-  searchParams: Promise<{ new?: string; date?: string; view?: string; appt?: string }>;
+  searchParams: Promise<{
+    new?: string;
+    date?: string;
+    view?: string;
+    appt?: string;
+    client?: string;
+  }>;
 }) {
   const sp = await searchParams;
   const tenant = getDefaultTenant();
@@ -50,7 +56,12 @@ export default async function CalendarPage({
         />
       </div>
       {sp.new && (
-        <NewAppointmentModal dateIso={date} staff={staff} services={services} />
+        <NewAppointmentModal
+          dateIso={date}
+          staff={staff}
+          services={services}
+          prefillClient={sp.client}
+        />
       )}
     </>
   );

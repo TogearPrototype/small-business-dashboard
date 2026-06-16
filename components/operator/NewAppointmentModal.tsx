@@ -15,10 +15,13 @@ export function NewAppointmentModal({
   dateIso,
   staff,
   services,
+  prefillClient,
 }: {
   dateIso: string;
   staff: Staff[];
   services: Service[];
+  /** Optional client name to prefill (e.g. when launched from a client profile). */
+  prefillClient?: string;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -30,7 +33,7 @@ export function NewAppointmentModal({
   );
   const [staffId, setStaffId] = useState(eligibleStaff[0]?.id ?? staff[0]?.id ?? "");
   const [startTime, setStartTime] = useState("10:30");
-  const [clientName, setClientName] = useState("");
+  const [clientName, setClientName] = useState(prefillClient ?? "");
   const [clientPhone, setClientPhone] = useState("");
   const [clientEmail, setClientEmail] = useState("");
   const [notes, setNotes] = useState("");

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SearchBox } from "./SearchBox";
 
 interface TopbarProps {
   title: string;
@@ -14,10 +15,7 @@ export function Topbar({ title, subtitle }: TopbarProps) {
         <div className="text-[12.5px] font-medium text-ink-faint">{subtitle}</div>
       </div>
       <div className="flex items-center gap-[10px]">
-        <div className="flex h-10 w-[240px] items-center gap-[9px] rounded-[10px] border border-line bg-field px-[13px] text-[13px] font-medium text-ink-ghost">
-          <span className="size-[14px] rounded-full border-[1.6px] border-[#c4c2c8]" />
-          Search clients, bookings…
-        </div>
+        <SearchBox />
         <Link
           href="/operator/calendar?new=1"
           className="flex h-10 items-center gap-2 rounded-[10px] bg-brand px-[17px] text-[13.5px] font-semibold text-white transition-[filter] hover:brightness-95"

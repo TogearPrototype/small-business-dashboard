@@ -1,4 +1,13 @@
-import type { Appointment, Client, Service, Staff, Tenant } from "./types";
+import type {
+  Appointment,
+  BusinessHours,
+  Client,
+  NotificationPrefs,
+  PaymentSettings,
+  Service,
+  Staff,
+  Tenant,
+} from "./types";
 
 /**
  * Demo tenant "Lumen Studio" — transcribed from the Claude Design scope so
@@ -27,12 +36,52 @@ export const tenants: Tenant[] = [
     brandColor: "#6d4a63",
     customDomain: "book.lumenstudio.com",
     address: "24 Pearl St",
+    phone: "(415) 555-0100",
+    email: "hello@lumenstudio.com",
     timezone: "America/Los_Angeles",
     openTime: "09:00",
     closeTime: "18:00",
     cancellationWindowHours: 24,
   },
 ];
+
+/**
+ * Default per-weekday opening schedule, keyed by tenant id. Mon–Sat open
+ * 09:00–18:00 (matching the staff shift window), Sunday closed. Index 0 = Sun.
+ */
+export const businessHours: Record<string, BusinessHours> = {
+  lumen: [
+    { open: false, start: "09:00", end: "18:00" }, // Sun
+    { open: true, start: "09:00", end: "18:00" }, // Mon
+    { open: true, start: "09:00", end: "18:00" }, // Tue
+    { open: true, start: "09:00", end: "18:00" }, // Wed
+    { open: true, start: "09:00", end: "18:00" }, // Thu
+    { open: true, start: "09:00", end: "18:00" }, // Fri
+    { open: true, start: "09:00", end: "18:00" }, // Sat
+  ],
+};
+
+/** Default notification preferences, keyed by tenant id. */
+export const notificationPrefs: Record<string, NotificationPrefs> = {
+  lumen: {
+    emailConfirmations: true,
+    smsReminders: true,
+    reminderLeadHours: 24,
+    emailReminders: false,
+    marketingEmails: false,
+  },
+};
+
+/** Default payment settings, keyed by tenant id. */
+export const paymentSettings: Record<string, PaymentSettings> = {
+  lumen: {
+    stripeConnected: false,
+    currency: "USD",
+    requireDeposit: false,
+    depositPercent: 0,
+    collectAtBooking: false,
+  },
+};
 
 export const staff: Staff[] = [
   {

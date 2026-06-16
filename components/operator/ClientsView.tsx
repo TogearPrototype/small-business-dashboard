@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { AppointmentDetail, Client } from "@/lib/types";
 import { cx, formatPrice, formatDateLabel } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/States";
+import { ClientEditor } from "@/components/operator/ClientEditor";
 
 interface HistoryEntry {
   date: string;
@@ -19,8 +21,20 @@ interface Props {
 }
 
 export function ClientsView({ clients, upcomingByClient, historyByClient }: Props) {
+  const router = useRouter();
   const [selectedId, setSelectedId] = useState(clients[0]?.id ?? "");
   const [query, setQuery] = useState("");
+  const [editing, setEditing] = useState(false);
+  // Id of a just-created client to select once it lands in props (post-refresh).
+  const [pendingSelectId, setPendingSelectId] = useState<string | null>(null);
+
+  // Once the refreshed clients list includes the newly created client, select it.
+  useEffect(() => {
+    if (pendingSelectId && clients.some((c) => c.id === pendingSelectId)) {
+      setSelectedId(pendingSelectId);
+      setPendingSelectId(null);
+    }
+  }, [clients, pendingSelectId]);
 
   const filtered = clients.filter((c) =>
     `${c.name} ${c.phone} ${c.email}`.toLowerCase().includes(query.toLowerCase()),
@@ -34,26 +48,47 @@ export function ClientsView({ clients, upcomingByClient, historyByClient }: Prop
     return `${c.visits} visits · ${formatPrice(c.totalSpendCents)}`;
   }
 
+  function handleCreated(id: string) {
+    setEditing(false);
+    setPendingSelectId(id);
+    router.refresh();
+  }
+
   if (clients.length === 0) {
     return (
-      <EmptyState
-        shape="circle"
-        title="No clients yet"
-        body="They’ll appear here after the first booking."
-        actions={[{ label: "+ Add client" }]}
-        className="h-full"
-      />
+      <div className="relative h-full">
+        <EmptyState
+          shape="circle"
+          title="No clients yet"
+          body="They’ll appear here after the first booking."
+          actions={[{ label: "+ Add client", onClick: () => setEditing(true) }]}
+          className="h-full"
+        />
+        {editing && (
+          <ClientEditor onClose={() => setEditing(false)} onCreated={handleCreated} />
+        )}
+      </div>
     );
   }
 
   return (
-    <div className="fade-in flex h-full">
+    <div className="fade-in relative flex h-full">
       {/* list */}
       <div className="flex w-[340px] flex-shrink-0 flex-col border-r border-line">
         <div className="px-5 pb-[14px] pt-5">
           <div className="mb-[14px] flex items-center justify-between">
-            <div className="font-display text-[20px] font-semibold tracking-[-0.01em]">Clients</div>
-            <span className="tnum text-[12px] font-medium text-ink-ghost">{clients.length}</span>
+            <div className="flex items-baseline gap-[9px]">
+              <div className="font-display text-[20px] font-semibold tracking-[-0.01em]">
+                Clients
+              </div>
+              <span className="tnum text-[12px] font-medium text-ink-ghost">{clients.length}</span>
+            </div>
+            <button
+              onClick={() => setEditing(true)}
+              className="flex h-[30px] items-center gap-[5px] rounded-[9px] bg-brand-tint px-[11px] text-[12.5px] font-semibold text-brand transition-[filter] hover:brightness-95"
+            >
+              <span className="text-[14px] leading-none">+</span>Add client
+            </button>
           </div>
           <div className="flex h-[38px] items-center gap-[9px] rounded-[9px] border border-line px-3">
             <span className="size-[14px] rounded-full border-[1.5px] border-[#c4c4c8]" />
@@ -114,7 +149,14 @@ export function ClientsView({ clients, upcomingByClient, historyByClient }: Prop
                 {selected.phone} · {selected.email}
               </div>
             </div>
-            <button className="flex h-[38px] items-center gap-[7px] rounded-[9px] bg-brand px-[15px] text-[13px] font-semibold text-white">
+            <button
+              onClick={() =>
+                router.push(
+                  `/operator/calendar?new=1&client=${encodeURIComponent(selected.name)}`,
+                )
+              }
+              className="flex h-[38px] items-center gap-[7px] rounded-[9px] bg-brand px-[15px] text-[13px] font-semibold text-white transition-[filter] hover:brightness-95"
+            >
               <span className="text-[15px]">+</span>Book appointment
             </button>
           </div>
@@ -183,6 +225,8 @@ export function ClientsView({ clients, upcomingByClient, historyByClient }: Prop
           )}
         </div>
       )}
+
+      {editing && <ClientEditor onClose={() => setEditing(false)} onCreated={handleCreated} />}
     </div>
   );
 }

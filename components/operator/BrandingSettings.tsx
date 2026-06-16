@@ -3,7 +3,6 @@
 import { useState, useTransition } from "react";
 import type { Tenant } from "@/lib/types";
 import { saveBranding } from "@/app/actions";
-import { cx } from "@/lib/utils";
 
 const PRESET_COLORS = [
   { hex: "#6d4760", name: "plum" },
@@ -12,8 +11,6 @@ const PRESET_COLORS = [
   { hex: "#9a7434", name: "amber" },
   { hex: "#356b73", name: "teal-petrol" },
 ];
-
-const SUBNAV = ["Business profile", "Branding", "Business hours", "Notifications", "Payments"];
 
 export function BrandingSettings({ tenant }: { tenant: Tenant }) {
   const [color, setColor] = useState(tenant.brandColor);
@@ -33,26 +30,6 @@ export function BrandingSettings({ tenant }: { tenant: Tenant }) {
     // Local --brand override so the whole panel (incl. live preview) reflects
     // the in-progress color before it's saved to the tenant.
     <div className="fade-in flex h-full" style={{ ["--brand" as string]: color }}>
-      {/* subnav */}
-      <div className="w-[200px] flex-shrink-0 border-r border-line bg-field px-4 py-6">
-        <div className="px-2 pb-4 font-display text-[18px] font-semibold tracking-[-0.01em]">
-          Settings
-        </div>
-        <div className="flex flex-col gap-0.5">
-          {SUBNAV.map((item) => (
-            <div
-              key={item}
-              className={cx(
-                "rounded-[8px] px-[10px] py-2 text-[13px] font-semibold",
-                item === "Branding" ? "bg-line-soft text-ink" : "text-ink-faint",
-              )}
-            >
-              {item}
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* form + preview */}
       <div className="flex flex-1 gap-10 overflow-auto px-[34px] py-[30px]">
         <div className="max-w-[440px] flex-1">

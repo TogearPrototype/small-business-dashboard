@@ -2,15 +2,22 @@ import type {
   Appointment,
   AppointmentDetail,
   AppointmentStatus,
+  BusinessHours,
   Client,
+  NotificationPrefs,
+  PaymentSettings,
   Service,
   Staff,
   Tenant,
+  Weekday,
 } from "./types";
 import { addMinutes } from "./utils";
 import {
   appointments as seedAppointments,
+  businessHours as seedBusinessHours,
   clients as seedClients,
+  notificationPrefs as seedNotificationPrefs,
+  paymentSettings as seedPaymentSettings,
   services as seedServices,
   staff as seedStaff,
   tenants as seedTenants,
@@ -29,15 +36,28 @@ import {
  * persist only for the life of the server process.
  */
 
+/** Clone a per-tenant settings record so module mutations never touch the seed. */
+function cloneSettings<T>(src: Record<string, T>): Record<string, T> {
+  return Object.fromEntries(
+    Object.entries(src).map(([k, v]) => [k, structuredClone(v)]),
+  );
+}
+
 const data = {
   tenants: [...seedTenants] as Tenant[],
   staff: [...seedStaff] as Staff[],
   services: [...seedServices] as Service[],
   clients: [...seedClients] as Client[],
   appointments: [...seedAppointments] as Appointment[],
+  businessHours: cloneSettings(seedBusinessHours) as Record<string, BusinessHours>,
+  notificationPrefs: cloneSettings(seedNotificationPrefs) as Record<string, NotificationPrefs>,
+  paymentSettings: cloneSettings(seedPaymentSettings) as Record<string, PaymentSettings>,
 };
 
 let apptCounter = data.appointments.length;
+let svcCounter = data.services.length;
+let staffCounter = data.staff.length;
+let clientCounter = data.clients.length;
 
 // ---- Tenants ----
 
@@ -56,6 +76,55 @@ export function updateTenantBranding(
   const t = data.tenants.find((x) => x.id === tenantId);
   if (t) Object.assign(t, patch);
   return t;
+}
+
+/** Update the business-profile fields of a tenant (same mutate-in-place pattern). */
+export function updateTenantProfile(
+  tenantId: string,
+  patch: Partial<Pick<Tenant, "name" | "tagline" | "address" | "phone" | "email" | "timezone">>,
+): Tenant | undefined {
+  const t = data.tenants.find((x) => x.id === tenantId);
+  if (t) Object.assign(t, patch);
+  return t;
+}
+
+// ---- Business hours ----
+
+export function getBusinessHours(tenantId: string): BusinessHours {
+  return data.businessHours[tenantId] ?? [];
+}
+
+export function setBusinessHours(tenantId: string, hours: BusinessHours): BusinessHours {
+  data.businessHours[tenantId] = hours;
+  return data.businessHours[tenantId];
+}
+
+// ---- Notification preferences ----
+
+export function getNotificationPrefs(tenantId: string): NotificationPrefs {
+  return data.notificationPrefs[tenantId];
+}
+
+export function setNotificationPrefs(
+  tenantId: string,
+  prefs: NotificationPrefs,
+): NotificationPrefs {
+  data.notificationPrefs[tenantId] = prefs;
+  return data.notificationPrefs[tenantId];
+}
+
+// ---- Payment settings ----
+
+export function getPaymentSettings(tenantId: string): PaymentSettings {
+  return data.paymentSettings[tenantId];
+}
+
+export function setPaymentSettings(
+  tenantId: string,
+  settings: PaymentSettings,
+): PaymentSettings {
+  data.paymentSettings[tenantId] = settings;
+  return data.paymentSettings[tenantId];
 }
 
 // ---- Staff / services / clients ----
@@ -223,4 +292,151 @@ export function createBooking(input: NewBookingInput): AppointmentDetail {
   };
   data.appointments.push(appt);
   return hydrate(input.tenantId, appt);
+}
+
+// ---- Service CRUD ----
+
+export function createService(
+  tenantId: string,
+  input: { name: string; category: string; durationMin: number; priceCents: number },
+): Service {
+  const service: Service = {
+    id: `svc_${++svcCounter}`,
+    tenantId,
+    name: input.name,
+    category: input.category,
+    durationMin: input.durationMin,
+    priceCents: input.priceCents,
+  };
+  data.services.push(service);
+  return service;
+}
+
+export function updateService(
+  tenantId: string,
+  id: string,
+  patch: Partial<Pick<Service, "name" | "category" | "durationMin" | "priceCents">>,
+): Service | undefined {
+  const s = data.services.find((x) => x.tenantId === tenantId && x.id === id);
+  if (s) Object.assign(s, patch);
+  return s;
+}
+
+export function deleteService(tenantId: string, id: string): boolean {
+  const idx = data.services.findIndex((x) => x.tenantId === tenantId && x.id === id);
+  if (idx === -1) return false;
+  data.services.splice(idx, 1);
+  return true;
+}
+
+// ---- Staff CRUD ----
+
+export function createStaff(
+  tenantId: string,
+  input: {
+    name: string;
+    shortName: string;
+    role: string;
+    workdays: Weekday[];
+    shiftStart: string;
+    shiftEnd: string;
+    serviceIds: string[];
+    isOwner?: boolean;
+  },
+): Staff {
+  const member: Staff = {
+    id: `stf_${++staffCounter}`,
+    tenantId,
+    name: input.name,
+    shortName: input.shortName,
+    role: input.role,
+    isOwner: input.isOwner ?? false,
+    avatarColor: "#ece9ef",
+    workdays: input.workdays,
+    shiftStart: input.shiftStart,
+    shiftEnd: input.shiftEnd,
+    serviceIds: input.serviceIds,
+  };
+  data.staff.push(member);
+  return member;
+}
+
+export function updateStaff(
+  tenantId: string,
+  id: string,
+  patch: Partial<
+    Pick<
+      Staff,
+      | "name"
+      | "shortName"
+      | "role"
+      | "isOwner"
+      | "workdays"
+      | "shiftStart"
+      | "shiftEnd"
+      | "serviceIds"
+    >
+  >,
+): Staff | undefined {
+  const s = data.staff.find((x) => x.tenantId === tenantId && x.id === id);
+  if (s) Object.assign(s, patch);
+  return s;
+}
+
+// ---- Clients ----
+
+export function addClient(
+  tenantId: string,
+  input: { name: string; phone: string; email: string; notes: string },
+): Client {
+  const client: Client = {
+    id: `c_${++clientCounter}`,
+    tenantId,
+    name: input.name,
+    phone: input.phone,
+    email: input.email,
+    totalSpendCents: 0,
+    visits: 0,
+    noShows: 0,
+    notes: input.notes,
+  };
+  data.clients.push(client);
+  return client;
+}
+
+// ---- Search ----
+
+/**
+ * Case-insensitive search across a tenant's clients and appointments.
+ * Clients match on name/phone/email; appointments match on client name or
+ * service name. Each result list is capped at 6.
+ */
+export function searchTenant(
+  tenantId: string,
+  query: string,
+): { clients: Client[]; appointments: AppointmentDetail[] } {
+  const q = query.trim().toLowerCase();
+  if (!q) return { clients: [], appointments: [] };
+
+  const clients = data.clients
+    .filter(
+      (c) =>
+        c.tenantId === tenantId &&
+        (c.name.toLowerCase().includes(q) ||
+          c.phone.toLowerCase().includes(q) ||
+          c.email.toLowerCase().includes(q)),
+    )
+    .slice(0, 6);
+
+  const appointments = data.appointments
+    .filter((a) => a.tenantId === tenantId)
+    .map((a) => hydrate(tenantId, a))
+    .filter(
+      (a) =>
+        a.client.name.toLowerCase().includes(q) ||
+        a.service.name.toLowerCase().includes(q),
+    )
+    .slice(0, 6);
+
+  return { clients, appointments };
 }

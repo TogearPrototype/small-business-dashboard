@@ -90,6 +90,16 @@ custom domains go live.
 - `app/operator/*` — internal app. `layout.tsx` resolves the tenant (currently
   the default; replace with the auth session's tenant) and sets `--brand`. Pages:
   `dashboard`, `calendar`, `clients`, `services`, `staff`, `settings`.
+- `app/operator/settings/*` — a nested shell: `settings/layout.tsx` renders the
+  Topbar + left subnav (highlighted via `usePathname`) and each tab page renders
+  only its form. Tabs: `branding`, `business`, `hours`, `notifications`,
+  `payments`; `settings/` redirects to `branding`. Per-tenant settings live in
+  the store (`getBusinessHours`/`setBusinessHours`, `getNotificationPrefs`/…,
+  `getPaymentSettings`/…) seeded from `lib/seed-data.ts` via `structuredClone`.
+- Operator CRUD: services (`ServicesView` + `ServiceEditor`), staff (`StaffView`
+  + `StaffEditor`), clients (`ClientsView` + `ClientEditor`) use modal editors
+  (pattern: `NewAppointmentModal`) wired to `create*/update*/delete*` actions.
+  Global Topbar search is `SearchBox` (debounced `searchAction`, grouped dropdown).
 - `app/book/[slug]/*` — public booking site for one tenant, resolved from the
   slug; 404s on unknown slugs. `page.tsx` is the booking flow; `manage/page.tsx`
   is the no-account Manage-booking screen (`?ref=<bookingRef>`; shows a lookup
