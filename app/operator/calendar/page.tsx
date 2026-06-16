@@ -25,9 +25,11 @@ export default async function CalendarPage({
   }>;
 }) {
   const sp = await searchParams;
-  const tenant = getDefaultTenant();
-  const staff = getStaff(tenant.id);
-  const services = getServices(tenant.id);
+  const tenant = await getDefaultTenant();
+  const [staff, services] = await Promise.all([
+    getStaff(tenant.id),
+    getServices(tenant.id),
+  ]);
 
   const date = sp.date ?? DEMO_DATE;
   const view: View = sp.view === "week" ? "week" : "day";
@@ -35,8 +37,8 @@ export default async function CalendarPage({
   // Load just the visible range.
   const appointments =
     view === "week"
-      ? getAppointmentsInRange(tenant.id, weekDates(date)[0], weekDates(date)[6])
-      : getAppointments(tenant.id, date);
+      ? await getAppointmentsInRange(tenant.id, weekDates(date)[0], weekDates(date)[6])
+      : await getAppointments(tenant.id, date);
 
   const subtitle =
     view === "week" ? `${formatWeekRange(date)} · week view` : `${formatDateLong(date)} · day view`;

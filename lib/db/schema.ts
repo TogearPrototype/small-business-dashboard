@@ -1,12 +1,17 @@
 import {
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   text,
   timestamp,
-  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import type {
+  BusinessHours,
+  NotificationPrefs,
+  PaymentSettings,
+} from "../types";
 
 /**
  * Drizzle schema for Neon Postgres — multi-tenant, shared-schema with a
@@ -34,7 +39,10 @@ export const appointmentStatus = pgEnum("appointment_status", [
 export const paymentStatus = pgEnum("payment_status", ["Paid", "Unpaid", "Refunded"]);
 
 export const tenants = pgTable("tenants", {
-  id: uuid("id").defaultRandom().primaryKey(),
+  // Text ids (not uuid) so the readable seed ids ("lumen", "balayage", "maya")
+  // are preserved — DB mode then behaves identically to the in-memory store and
+  // getDefaultTenant().id stays "lumen" throughout the app.
+  id: text("id").primaryKey(),
   slug: varchar("slug", { length: 63 }).notNull().unique(),
   name: text("name").notNull(),
   tagline: text("tagline").notNull().default(""),
@@ -43,16 +51,23 @@ export const tenants = pgTable("tenants", {
   brandColor: varchar("brand_color", { length: 9 }).notNull().default("#6d4a63"),
   customDomain: text("custom_domain"),
   address: text("address").notNull().default(""),
+  phone: text("phone").notNull().default(""),
+  email: text("email").notNull().default(""),
   timezone: text("timezone").notNull().default("America/Los_Angeles"),
   openTime: varchar("open_time", { length: 5 }).notNull().default("09:00"),
   closeTime: varchar("close_time", { length: 5 }).notNull().default("18:00"),
   cancellationWindowHours: integer("cancellation_window_hours").notNull().default(24),
+  // Per-tenant settings stored as JSON (one tenants row holds everything the
+  // settings tabs edit). Typed via the domain model.
+  businessHours: jsonb("business_hours").$type<BusinessHours>(),
+  notificationPrefs: jsonb("notification_prefs").$type<NotificationPrefs>(),
+  paymentSettings: jsonb("payment_settings").$type<PaymentSettings>(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const staff = pgTable("staff", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  tenantId: uuid("tenant_id")
+  id: text("id").primaryKey(),
+  tenantId: text("tenant_id")
     .notNull()
     .references(() => tenants.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
@@ -68,8 +83,8 @@ export const staff = pgTable("staff", {
 });
 
 export const services = pgTable("services", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  tenantId: uuid("tenant_id")
+  id: text("id").primaryKey(),
+  tenantId: text("tenant_id")
     .notNull()
     .references(() => tenants.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
@@ -79,8 +94,8 @@ export const services = pgTable("services", {
 });
 
 export const clients = pgTable("clients", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  tenantId: uuid("tenant_id")
+  id: text("id").primaryKey(),
+  tenantId: text("tenant_id")
     .notNull()
     .references(() => tenants.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
@@ -93,17 +108,17 @@ export const clients = pgTable("clients", {
 });
 
 export const appointments = pgTable("appointments", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  tenantId: uuid("tenant_id")
+  id: text("id").primaryKey(),
+  tenantId: text("tenant_id")
     .notNull()
     .references(() => tenants.id, { onDelete: "cascade" }),
-  clientId: uuid("client_id")
+  clientId: text("client_id")
     .notNull()
     .references(() => clients.id, { onDelete: "cascade" }),
-  staffId: uuid("staff_id")
+  staffId: text("staff_id")
     .notNull()
     .references(() => staff.id, { onDelete: "restrict" }),
-  serviceId: uuid("service_id")
+  serviceId: text("service_id")
     .notNull()
     .references(() => services.id, { onDelete: "restrict" }),
   date: varchar("date", { length: 10 }).notNull(), // YYYY-MM-DD

@@ -42,8 +42,8 @@ import type {
  */
 
 export async function changeAppointmentStatus(id: string, status: AppointmentStatus) {
-  const tenant = getDefaultTenant();
-  setAppointmentStatus(tenant.id, id, status);
+  const tenant = await getDefaultTenant();
+  await setAppointmentStatus(tenant.id, id, status);
   revalidatePath("/operator/calendar");
   revalidatePath("/operator/dashboard");
 }
@@ -51,11 +51,11 @@ export async function changeAppointmentStatus(id: string, status: AppointmentSta
 export async function submitBooking(
   input: Omit<NewBookingInput, "tenantId">,
 ): Promise<{ id: string; ref: string }> {
-  const tenant = getDefaultTenant();
-  const appt = createBooking({ ...input, tenantId: tenant.id });
+  const tenant = await getDefaultTenant();
+  const appt = await createBooking({ ...input, tenantId: tenant.id });
   revalidatePath("/operator/calendar");
   revalidatePath("/operator/dashboard");
-  return { id: appt.id, ref: bookingRef(tenant.id, appt.id) };
+  return { id: appt.id, ref: await bookingRef(tenant.id, appt.id) };
 }
 
 export async function rescheduleAppt(
@@ -64,8 +64,8 @@ export async function rescheduleAppt(
   startTime: string,
   staffId?: string,
 ) {
-  const tenant = getDefaultTenant();
-  rescheduleAppointment(tenant.id, id, date, startTime, staffId);
+  const tenant = await getDefaultTenant();
+  await rescheduleAppointment(tenant.id, id, date, startTime, staffId);
   revalidatePath("/operator/calendar");
   revalidatePath("/operator/dashboard");
 }
@@ -77,10 +77,10 @@ export async function rescheduleByRef(
   startTime: string,
   staffId: string,
 ): Promise<{ ok: boolean }> {
-  const tenant = getDefaultTenant();
-  const appt = getAppointmentByRef(tenant.id, ref);
+  const tenant = await getDefaultTenant();
+  const appt = await getAppointmentByRef(tenant.id, ref);
   if (!appt) return { ok: false };
-  rescheduleAppointment(tenant.id, appt.id, date, startTime, staffId);
+  await rescheduleAppointment(tenant.id, appt.id, date, startTime, staffId);
   revalidatePath("/operator/calendar");
   revalidatePath("/operator/dashboard");
   return { ok: true };
@@ -88,10 +88,10 @@ export async function rescheduleByRef(
 
 /** Cancel a public booking identified by its ref. */
 export async function cancelByRef(ref: string): Promise<{ ok: boolean }> {
-  const tenant = getDefaultTenant();
-  const appt = getAppointmentByRef(tenant.id, ref);
+  const tenant = await getDefaultTenant();
+  const appt = await getAppointmentByRef(tenant.id, ref);
   if (!appt) return { ok: false };
-  setAppointmentStatus(tenant.id, appt.id, "cancelled");
+  await setAppointmentStatus(tenant.id, appt.id, "cancelled");
   revalidatePath("/operator/calendar");
   revalidatePath("/operator/dashboard");
   return { ok: true };
@@ -103,7 +103,7 @@ export async function fetchSlots(
   date: string,
   staffId?: string,
 ): Promise<{ morning: Slot[]; afternoon: Slot[]; all: Slot[] }> {
-  const all = getAvailableSlots(tenantSlug, serviceId, date, staffId);
+  const all = await getAvailableSlots(tenantSlug, serviceId, date, staffId);
   const { morning, afternoon } = groupSlots(all);
   return { morning, afternoon, all };
 }
@@ -114,8 +114,8 @@ export async function saveBranding(patch: {
   name?: string;
   tagline?: string;
 }) {
-  const tenant = getDefaultTenant();
-  updateTenantBranding(tenant.id, patch);
+  const tenant = await getDefaultTenant();
+  await updateTenantBranding(tenant.id, patch);
   revalidatePath("/operator", "layout");
   revalidatePath("/operator/settings");
 }
@@ -130,8 +130,8 @@ export async function saveBusinessProfile(input: {
   email: string;
   timezone: string;
 }) {
-  const tenant = getDefaultTenant();
-  updateTenantProfile(tenant.id, input);
+  const tenant = await getDefaultTenant();
+  await updateTenantProfile(tenant.id, input);
   // Name/tagline appear in the sidebar + topbar, so revalidate the whole shell.
   revalidatePath("/operator", "layout");
 }
@@ -139,8 +139,8 @@ export async function saveBusinessProfile(input: {
 // ---- Settings: business hours ----
 
 export async function saveBusinessHours(hours: BusinessHours) {
-  const tenant = getDefaultTenant();
-  setBusinessHours(tenant.id, hours);
+  const tenant = await getDefaultTenant();
+  await setBusinessHours(tenant.id, hours);
   // Hours drive the public booking calendar window tenant-wide.
   revalidatePath("/operator", "layout");
 }
@@ -148,16 +148,16 @@ export async function saveBusinessHours(hours: BusinessHours) {
 // ---- Settings: notifications ----
 
 export async function saveNotificationPrefs(prefs: NotificationPrefs) {
-  const tenant = getDefaultTenant();
-  setNotificationPrefs(tenant.id, prefs);
+  const tenant = await getDefaultTenant();
+  await setNotificationPrefs(tenant.id, prefs);
   revalidatePath("/operator/settings/notifications");
 }
 
 // ---- Settings: payments ----
 
 export async function savePaymentSettings(settings: PaymentSettings) {
-  const tenant = getDefaultTenant();
-  setPaymentSettings(tenant.id, settings);
+  const tenant = await getDefaultTenant();
+  await setPaymentSettings(tenant.id, settings);
   revalidatePath("/operator/settings/payments");
 }
 
@@ -169,8 +169,8 @@ export async function createServiceAction(input: {
   durationMin: number;
   priceCents: number;
 }): Promise<Service> {
-  const tenant = getDefaultTenant();
-  const service = createService(tenant.id, input);
+  const tenant = await getDefaultTenant();
+  const service = await createService(tenant.id, input);
   revalidatePath("/operator", "layout");
   return service;
 }
@@ -179,15 +179,15 @@ export async function updateServiceAction(
   id: string,
   patch: Partial<Pick<Service, "name" | "category" | "durationMin" | "priceCents">>,
 ): Promise<Service | undefined> {
-  const tenant = getDefaultTenant();
-  const service = updateService(tenant.id, id, patch);
+  const tenant = await getDefaultTenant();
+  const service = await updateService(tenant.id, id, patch);
   revalidatePath("/operator", "layout");
   return service;
 }
 
 export async function deleteServiceAction(id: string): Promise<{ ok: boolean }> {
-  const tenant = getDefaultTenant();
-  const ok = deleteService(tenant.id, id);
+  const tenant = await getDefaultTenant();
+  const ok = await deleteService(tenant.id, id);
   revalidatePath("/operator", "layout");
   return { ok };
 }
@@ -204,8 +204,8 @@ export async function createStaffAction(input: {
   serviceIds: string[];
   isOwner?: boolean;
 }): Promise<Staff> {
-  const tenant = getDefaultTenant();
-  const member = createStaff(tenant.id, input);
+  const tenant = await getDefaultTenant();
+  const member = await createStaff(tenant.id, input);
   revalidatePath("/operator", "layout");
   return member;
 }
@@ -226,8 +226,8 @@ export async function updateStaffAction(
     >
   >,
 ): Promise<Staff | undefined> {
-  const tenant = getDefaultTenant();
-  const member = updateStaff(tenant.id, id, patch);
+  const tenant = await getDefaultTenant();
+  const member = await updateStaff(tenant.id, id, patch);
   revalidatePath("/operator", "layout");
   return member;
 }
@@ -240,8 +240,8 @@ export async function addClientAction(input: {
   email: string;
   notes: string;
 }): Promise<{ id: string }> {
-  const tenant = getDefaultTenant();
-  const client = addClient(tenant.id, input);
+  const tenant = await getDefaultTenant();
+  const client = await addClient(tenant.id, input);
   revalidatePath("/operator/clients");
   return { id: client.id };
 }
@@ -251,6 +251,6 @@ export async function addClientAction(input: {
 export async function searchAction(
   query: string,
 ): Promise<{ clients: Client[]; appointments: AppointmentDetail[] }> {
-  const tenant = getDefaultTenant();
+  const tenant = await getDefaultTenant();
   return searchTenant(tenant.id, query);
 }

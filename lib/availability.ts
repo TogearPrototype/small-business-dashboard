@@ -1,6 +1,6 @@
-import type { Staff } from "./types";
+import type { AppointmentDetail, Staff } from "./types";
 import { getAppointments, getServices, getStaff, getTenant } from "./store";
-import { addMinutes, toMinutes } from "./utils";
+import { addMinutes, toMinutes, weekdayOf } from "./utils";
 
 /**
  * Availability engine — computes open start-times for a service on a given
@@ -27,12 +27,8 @@ interface Busy {
   end: number;
 }
 
-function dateWeekday(iso: string): number {
-  return new Date(iso + "T00:00:00").getDay();
-}
-
-function staffBusyRanges(tenantId: string, date: string, staffId: string): Busy[] {
-  return getAppointments(tenantId, date)
+function staffBusyRanges(appts: AppointmentDetail[], staffId: string): Busy[] {
+  return appts
     .filter((a) => a.staffId === staffId && a.status !== "cancelled")
     .map((a) => ({
       start: toMinutes(a.startTime),
@@ -45,22 +41,27 @@ function staffCanWork(staff: Staff, weekday: number): boolean {
 }
 
 /** Open start-times for `serviceId` on `date`, optionally pinned to one staff. */
-export function getAvailableSlots(
+export async function getAvailableSlots(
   tenantId: string,
   serviceId: string,
   date: string,
   staffId?: string,
-): Slot[] {
+): Promise<Slot[]> {
   // In the store, tenantId is the same key as the slug.
-  const tenant = getTenant(tenantId);
-  const service = getServices(tenantId).find((s) => s.id === serviceId);
+  const [tenant, allServices, allStaff, dayAppts] = await Promise.all([
+    getTenant(tenantId),
+    getServices(tenantId),
+    getStaff(tenantId),
+    getAppointments(tenantId, date),
+  ]);
+  const service = allServices.find((s) => s.id === serviceId);
   if (!service || !tenant) return [];
 
-  const weekday = dateWeekday(date);
+  const weekday = weekdayOf(date);
   const openMin = toMinutes(tenant.openTime);
   const closeMin = toMinutes(tenant.closeTime);
 
-  const candidates = getStaff(tenantId).filter(
+  const candidates = allStaff.filter(
     (s) =>
       s.serviceIds.includes(serviceId) &&
       (!staffId || s.id === staffId) &&
@@ -71,7 +72,7 @@ export function getAvailableSlots(
   for (const member of candidates) {
     const shiftStart = Math.max(openMin, toMinutes(member.shiftStart));
     const shiftEnd = Math.min(closeMin, toMinutes(member.shiftEnd));
-    const busy = staffBusyRanges(tenantId, date, member.id);
+    const busy = staffBusyRanges(dayAppts, member.id);
 
     for (let t = shiftStart; t + service.durationMin <= shiftEnd; t += SLOT_GRANULARITY_MIN) {
       const end = t + service.durationMin;

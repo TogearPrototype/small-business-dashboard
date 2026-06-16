@@ -2,10 +2,12 @@ import { getDefaultTenant, getServices, getStaff } from "@/lib/store";
 import { Topbar } from "@/components/operator/Topbar";
 import { StaffView } from "@/components/operator/StaffView";
 
-export default function StaffPage() {
-  const tenant = getDefaultTenant();
-  const staff = getStaff(tenant.id);
-  const services = getServices(tenant.id);
+export default async function StaffPage() {
+  const tenant = await getDefaultTenant();
+  const [staff, services] = await Promise.all([
+    getStaff(tenant.id),
+    getServices(tenant.id),
+  ]);
 
   return (
     <>

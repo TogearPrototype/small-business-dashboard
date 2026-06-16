@@ -9,11 +9,13 @@ export default async function BookPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const tenant = getTenant(slug);
+  const tenant = await getTenant(slug);
   if (!tenant) notFound();
 
-  const services = getServices(tenant.id);
-  const staff = getStaff(tenant.id);
+  const [services, staff] = await Promise.all([
+    getServices(tenant.id),
+    getStaff(tenant.id),
+  ]);
 
   return (
     <BookingFlow tenant={tenant} services={services} staff={staff} startDate={DEMO_DATE} />

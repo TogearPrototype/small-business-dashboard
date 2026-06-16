@@ -4,12 +4,12 @@ import { Topbar } from "@/components/operator/Topbar";
 import { ClientsView } from "@/components/operator/ClientsView";
 import type { AppointmentDetail } from "@/lib/types";
 
-export default function ClientsPage() {
-  const tenant = getDefaultTenant();
-  const clients = getClients(tenant.id);
+export default async function ClientsPage() {
+  const tenant = await getDefaultTenant();
+  const clients = await getClients(tenant.id);
 
   // Upcoming appointments per client (demo day onward).
-  const todays = getAppointments(tenant.id, DEMO_DATE);
+  const todays = await getAppointments(tenant.id, DEMO_DATE);
   const upcomingByClient: Record<string, AppointmentDetail[]> = {};
   for (const a of todays) {
     if (a.status === "cancelled" || a.status === "completed" || a.status === "noshow") continue;

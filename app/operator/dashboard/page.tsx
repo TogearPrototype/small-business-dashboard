@@ -7,10 +7,13 @@ import { formatPrice, formatDateLong, STATUS_STYLES, toMinutes } from "@/lib/uti
 // The demo clock — matches the design's 11:24 now-line on 2026-06-15.
 const NOW_MINUTES = DEMO_NOW_MINUTES;
 
-export default function DashboardPage() {
-  const tenant = getDefaultTenant();
-  const appts = getAppointments(tenant.id, DEMO_DATE);
-  const staffOnToday = getStaff(tenant.id).length;
+export default async function DashboardPage() {
+  const tenant = await getDefaultTenant();
+  const [appts, staffList] = await Promise.all([
+    getAppointments(tenant.id, DEMO_DATE),
+    getStaff(tenant.id),
+  ]);
+  const staffOnToday = staffList.length;
 
   const active = appts.filter(
     (a) =>
@@ -29,7 +32,7 @@ export default function DashboardPage() {
 
   // Utilization: booked minutes vs. total staff working minutes today.
   const bookedMin = billable.reduce((sum, a) => sum + a.durationMin, 0);
-  const capacityMin = getStaff(tenant.id).reduce(
+  const capacityMin = staffList.reduce(
     (sum, s) => sum + (toMinutes(s.shiftEnd) - toMinutes(s.shiftStart)),
     0,
   );

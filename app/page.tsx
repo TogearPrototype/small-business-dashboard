@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { getDefaultTenant } from "@/lib/store";
 
-export default function Home() {
-  const tenant = getDefaultTenant();
+// Reads the tenant from the data layer per request.
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const tenant = await getDefaultTenant();
   return (
     <div
       className="flex min-h-screen flex-col items-center justify-center px-6"

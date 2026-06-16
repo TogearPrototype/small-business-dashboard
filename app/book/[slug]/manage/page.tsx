@@ -12,14 +12,14 @@ export default async function ManagePage({
 }) {
   const { slug } = await params;
   const { ref } = await searchParams;
-  const tenant = getTenant(slug);
+  const tenant = await getTenant(slug);
   if (!tenant) notFound();
 
   if (!ref) {
     return <ManageLookup tenant={tenant} />;
   }
 
-  const appt = getAppointmentByRef(tenant.id, ref);
+  const appt = await getAppointmentByRef(tenant.id, ref);
   if (!appt) {
     return <ManageLookup tenant={tenant} notFound />;
   }

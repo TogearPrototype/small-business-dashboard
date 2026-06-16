@@ -2,10 +2,12 @@ import { getDefaultTenant, getServices, getStaff } from "@/lib/store";
 import { Topbar } from "@/components/operator/Topbar";
 import { ServicesView } from "@/components/operator/ServicesView";
 
-export default function ServicesPage() {
-  const tenant = getDefaultTenant();
-  const services = getServices(tenant.id);
-  const staff = getStaff(tenant.id);
+export default async function ServicesPage() {
+  const tenant = await getDefaultTenant();
+  const [services, staff] = await Promise.all([
+    getServices(tenant.id),
+    getStaff(tenant.id),
+  ]);
 
   const categoryCount = new Set(services.map((s) => s.category)).size;
 

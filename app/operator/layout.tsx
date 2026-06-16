@@ -1,18 +1,22 @@
 import { getDefaultTenant } from "@/lib/store";
 import { Sidebar } from "@/components/operator/Sidebar";
 
+// The operator app reads live tenant/appointment data on every request, so it
+// must render dynamically rather than being statically prerendered at build.
+export const dynamic = "force-dynamic";
+
 /**
  * Operator (internal) app shell. For this single-tenant demo it resolves the
  * default tenant; in the multi-tenant SaaS the tenant comes from the
  * authenticated session. The tenant's brand color is injected as --brand here
  * so every descendant tints from it.
  */
-export default function OperatorLayout({
+export default async function OperatorLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const tenant = getDefaultTenant();
+  const tenant = await getDefaultTenant();
 
   return (
     <div

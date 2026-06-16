@@ -50,23 +50,35 @@ Tabular figures use the `.tnum` class for any numeric/time data.
 ## Data flow
 
 All UI reads/writes go through **`lib/store.ts`** — the single data-access seam.
-Today it's an in-memory store seeded from `lib/seed-data.ts` (the "Lumen Studio"
-tenant), so the app runs with no database. Its function signatures are the
-contract: when `USE_DATABASE=true`, reimplement those functions as Drizzle
-queries against `lib/db/` — **components and actions should not change.**
+**Every store function is `async`** and dispatches on the `USE_DATABASE` env flag:
+- `USE_DATABASE=true`  → Neon/Drizzle queries in `lib/db/queries.ts`
+- otherwise            → the in-memory fallback in `lib/memory-store.ts`
+  (seeded from `lib/seed-data.ts`; resets on restart)
 
-- `lib/types.ts` — domain model (Tenant, Staff, Service, Client, Appointment).
-  Every entity carries `tenantId`.
-- `lib/store.ts` — data access (get/update tenant, staff, services, clients,
-  appointments; `createBooking`, `setAppointmentStatus`). Mutations persist only
-  for the server process lifetime (in-memory).
-- `lib/availability.ts` — the scheduling engine: computes open start-times from
-  staff workdays/shifts + existing bookings + service duration + tenant hours.
-  **This is the seam for the real engine** — when on Neon, prevent
-  double-booking with a DB-level exclusion constraint, not just this check.
-- `lib/db/schema.ts` — Drizzle/Neon schema (shared-schema multi-tenancy; RLS
-  policy sketch in comments). `lib/db/index.ts` gates the connection on
-  `USE_DATABASE`. `lib/db/seed.ts` loads the demo tenant into Neon.
+The two implementations mirror each other function-for-function; keep them in
+sync. Callers (`async` Server Component pages + server actions) just `await`.
+The flag is read once in `lib/db/index.ts` as `isDatabaseEnabled`.
+
+Because every page reads live data, the operator app, home page, and booking
+site are all **`export const dynamic = "force-dynamic"`** (set on the two
+layouts + `app/page.tsx`) — they must render per-request, not be prerendered at
+build (a static prerender would run DB queries during `next build`).
+
+- `lib/types.ts` — domain model (Tenant, Staff, Service, Client, Appointment,
+  plus settings: BusinessHours / NotificationPrefs / PaymentSettings). Every
+  entity carries `tenantId`.
+- `lib/store.ts` — the async facade (the only module the app imports for data).
+- `lib/memory-store.ts` / `lib/db/queries.ts` — the two implementations.
+- `lib/availability.ts` — async scheduling engine: open start-times from staff
+  workdays/shifts + existing bookings + service duration + tenant hours.
+  **Seam for the real engine** — prevent double-booking with a DB-level
+  exclusion constraint, not just this check.
+- `lib/db/schema.ts` — Drizzle/Neon schema. **Text PKs equal to the seed ids**
+  ("lumen", "balayage", "maya") so DB mode matches in-memory mode exactly;
+  app-created rows get generated ids. Settings are `jsonb` columns on `tenants`.
+  Shared-schema multi-tenancy; RLS policy sketch in comments.
+- `lib/db/index.ts` gates the connection on `USE_DATABASE`. `lib/db/seed.ts`
+  truncates + loads the demo tenant into Neon (`npm run db:push` then `db:seed`).
 - `app/actions.ts` — server actions: `changeAppointmentStatus`, `submitBooking`,
   `fetchSlots`, `rescheduleAppt` (operator), `rescheduleByRef` / `cancelByRef`
   (public, by booking ref), `saveBranding`. These call the store and
