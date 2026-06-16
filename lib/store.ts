@@ -105,6 +105,18 @@ export function getAppointments(tenantId: string, date: string): AppointmentDeta
     .sort((a, b) => a.startTime.localeCompare(b.startTime));
 }
 
+/** Appointments within an inclusive ISO date range [from, to]. */
+export function getAppointmentsInRange(
+  tenantId: string,
+  from: string,
+  to: string,
+): AppointmentDetail[] {
+  return data.appointments
+    .filter((a) => a.tenantId === tenantId && a.date >= from && a.date <= to)
+    .map((a) => hydrate(tenantId, a))
+    .sort((a, b) => a.date.localeCompare(b.date) || a.startTime.localeCompare(b.startTime));
+}
+
 export function getAppointment(tenantId: string, id: string): AppointmentDetail | undefined {
   const a = data.appointments.find((x) => x.tenantId === tenantId && x.id === id);
   return a ? hydrate(tenantId, a) : undefined;
@@ -119,6 +131,46 @@ export function setAppointmentStatus(
   if (!a) return undefined;
   a.status = status;
   return hydrate(tenantId, a);
+}
+
+/** Move an appointment to a new date/time and optionally a new staff member. */
+export function rescheduleAppointment(
+  tenantId: string,
+  id: string,
+  date: string,
+  startTime: string,
+  staffId?: string,
+): AppointmentDetail | undefined {
+  const a = data.appointments.find((x) => x.tenantId === tenantId && x.id === id);
+  if (!a) return undefined;
+  a.date = date;
+  a.startTime = startTime;
+  if (staffId) a.staffId = staffId;
+  return hydrate(tenantId, a);
+}
+
+/**
+ * Human-friendly booking reference, e.g. "LUM-0021". Deterministic from the
+ * tenant slug + the appointment id's digits, so the same appointment always
+ * resolves to the same ref (used by the public Manage-booking flow).
+ */
+export function bookingRef(tenantId: string, appointmentId: string): string {
+  const tenant = data.tenants.find((t) => t.id === tenantId);
+  const prefix = (tenant?.slug ?? "bkg").slice(0, 3).toUpperCase();
+  const digits = appointmentId.replace(/\D/g, "").padStart(4, "0").slice(-4);
+  return `${prefix}-${digits}`;
+}
+
+/** Resolve an appointment from its booking ref (case-insensitive). */
+export function getAppointmentByRef(
+  tenantId: string,
+  ref: string,
+): AppointmentDetail | undefined {
+  const target = ref.trim().toUpperCase();
+  const match = data.appointments.find(
+    (a) => a.tenantId === tenantId && bookingRef(tenantId, a.id) === target,
+  );
+  return match ? hydrate(tenantId, match) : undefined;
 }
 
 export interface NewBookingInput {

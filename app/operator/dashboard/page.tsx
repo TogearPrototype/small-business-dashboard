@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { getAppointments, getDefaultTenant, getStaff } from "@/lib/store";
-import { DEMO_DATE } from "@/lib/seed-data";
+import { DEMO_DATE, DEMO_NOW_MINUTES } from "@/lib/seed-data";
 import { Topbar } from "@/components/operator/Topbar";
 import { formatPrice, formatDateLong, STATUS_STYLES, toMinutes } from "@/lib/utils";
 
 // The demo clock — matches the design's 11:24 now-line on 2026-06-15.
-const NOW_MINUTES = 11 * 60 + 24;
+const NOW_MINUTES = DEMO_NOW_MINUTES;
 
 export default function DashboardPage() {
   const tenant = getDefaultTenant();

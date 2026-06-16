@@ -4,7 +4,19 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import type { Service, Staff, Tenant } from "@/lib/types";
 import type { Slot } from "@/lib/availability";
 import { fetchSlots, submitBooking } from "@/app/actions";
-import { cx, formatPrice, formatPriceExact, to12h } from "@/lib/utils";
+import { SlotSkeleton } from "@/components/ui/States";
+import {
+  addDays,
+  buildIcs,
+  cx,
+  dayOfMonth,
+  formatDateLabel,
+  formatPrice,
+  formatPriceExact,
+  to12h,
+  weekdayLabel,
+  weekdayOf,
+} from "@/lib/utils";
 
 type Step = "service" | "staff" | "time" | "details" | "review" | "done";
 
@@ -41,22 +53,17 @@ const EMPTY: BookingState = {
   notes: "",
 };
 
-/** Build the next 14 selectable dates starting from the demo date. */
+/** Build the next 14 selectable dates, starting a couple days out (like the design). */
 function buildDates(startIso: string): { iso: string; weekday: string; day: number; isSunday: boolean }[] {
-  const out = [];
-  const base = new Date(startIso + "T00:00:00");
-  for (let i = 0; i < 14; i++) {
-    const d = new Date(base);
-    d.setDate(base.getDate() + i + 2); // start a couple days out, like the design
-    const iso = d.toISOString().slice(0, 10);
-    out.push({
+  return Array.from({ length: 14 }, (_, i) => {
+    const iso = addDays(startIso, i + 2);
+    return {
       iso,
-      weekday: d.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase(),
-      day: d.getDate(),
-      isSunday: d.getDay() === 0,
-    });
-  }
-  return out;
+      weekday: weekdayLabel(iso).toUpperCase(),
+      day: dayOfMonth(iso),
+      isSunday: weekdayOf(iso) === 0,
+    };
+  });
 }
 
 export function BookingFlow({
@@ -510,7 +517,7 @@ function TimeStep({
       </div>
       <div className="flex-1 overflow-auto px-[22px]">
         {loading ? (
-          <div className="pt-8 text-center text-[13px] font-medium text-ink-ghost">Loading times…</div>
+          <SlotSkeleton count={9} />
         ) : hasSlots ? (
           <>
             {renderGroup("Morning", slots.morning)}
@@ -550,11 +557,7 @@ function DetailsStep({
   onEdit: () => void;
   onContinue: () => void;
 }) {
-  const dateLabel = new Date(date + "T00:00:00").toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-  });
+  const dateLabel = formatDateLabel(date);
   return (
     <>
       <div className="flex-1 overflow-auto px-[22px] pt-[22px]">
@@ -644,11 +647,7 @@ function ReviewStep({
   pending: boolean;
   onConfirm: () => void;
 }) {
-  const dateLabel = new Date(date + "T00:00:00").toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-  });
+  const dateLabel = formatDateLabel(date);
   return (
     <>
       <div className="flex-1 overflow-auto px-[22px] pt-6">
@@ -708,10 +707,28 @@ function DoneStep({
   time: string;
   bookingRef: string;
 }) {
-  const d = new Date(date + "T00:00:00");
-  const month = d.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
-  const dayNum = d.getDate();
-  const weekday = d.toLocaleDateString("en-US", { weekday: "long" });
+  const d = new Date(date + "T00:00:00Z");
+  const month = d.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" }).toUpperCase();
+  const dayNum = d.getUTCDate();
+  const weekday = d.toLocaleDateString("en-US", { weekday: "long", timeZone: "UTC" });
+
+  function addToCalendar() {
+    const ics = buildIcs({
+      title: `${service.name} · ${tenant.name}`,
+      date,
+      time,
+      durationMin: service.durationMin,
+      location: `${tenant.name}, ${tenant.address}`,
+      description: `Booking ref ${bookingRef}. With ${staffName}.`,
+    });
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${bookingRef}.ics`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <div className="flex h-full flex-col">
@@ -753,12 +770,18 @@ function DoneStep({
         </div>
       </div>
       <div className="flex flex-col gap-[10px] px-[26px] py-5">
-        <button className="flex h-12 items-center justify-center gap-2 rounded-[12px] bg-brand text-[14px] font-bold text-white">
+        <button
+          onClick={addToCalendar}
+          className="flex h-12 items-center justify-center gap-2 rounded-[12px] bg-brand text-[14px] font-bold text-white transition-[filter] hover:brightness-95"
+        >
           Add to calendar
         </button>
-        <button className="flex h-12 items-center justify-center rounded-[12px] border border-line text-[14px] font-semibold text-ink-soft">
+        <a
+          href={`/book/${tenant.slug}/manage?ref=${encodeURIComponent(bookingRef)}`}
+          className="flex h-12 items-center justify-center rounded-[12px] border border-line text-[14px] font-semibold text-ink-soft hover:bg-field"
+        >
           Manage booking
-        </button>
+        </a>
       </div>
       <div className="mt-auto px-[26px] pb-[26px] text-center text-[11.5px] font-medium text-ink-ghost">
         Booking ref · {bookingRef}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { AppointmentDetail, Client } from "@/lib/types";
 import { cx, formatPrice, formatDateLabel } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/States";
 
 interface HistoryEntry {
   date: string;
@@ -33,6 +34,18 @@ export function ClientsView({ clients, upcomingByClient, historyByClient }: Prop
     return `${c.visits} visits · ${formatPrice(c.totalSpendCents)}`;
   }
 
+  if (clients.length === 0) {
+    return (
+      <EmptyState
+        shape="circle"
+        title="No clients yet"
+        body="They’ll appear here after the first booking."
+        actions={[{ label: "+ Add client" }]}
+        className="h-full"
+      />
+    );
+  }
+
   return (
     <div className="fade-in flex h-full">
       {/* list */}
@@ -53,6 +66,11 @@ export function ClientsView({ clients, upcomingByClient, historyByClient }: Prop
           </div>
         </div>
         <div className="flex-1 overflow-auto">
+          {filtered.length === 0 && (
+            <div className="px-5 py-10 text-center text-[12.5px] font-medium text-ink-ghost">
+              No clients match “{query}”.
+            </div>
+          )}
           {filtered.map((c) => {
             const active = c.id === selectedId;
             return (

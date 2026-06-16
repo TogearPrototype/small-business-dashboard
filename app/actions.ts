@@ -2,8 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import {
+  bookingRef,
   createBooking,
+  getAppointmentByRef,
   getDefaultTenant,
+  rescheduleAppointment,
   setAppointmentStatus,
   updateTenantBranding,
   type NewBookingInput,
@@ -31,9 +34,46 @@ export async function submitBooking(
   const appt = createBooking({ ...input, tenantId: tenant.id });
   revalidatePath("/operator/calendar");
   revalidatePath("/operator/dashboard");
-  // Human-friendly booking reference, e.g. LUM-4821.
-  const ref = `${tenant.slug.slice(0, 3).toUpperCase()}-${appt.id.replace(/\D/g, "").padStart(4, "0").slice(-4)}`;
-  return { id: appt.id, ref };
+  return { id: appt.id, ref: bookingRef(tenant.id, appt.id) };
+}
+
+export async function rescheduleAppt(
+  id: string,
+  date: string,
+  startTime: string,
+  staffId?: string,
+) {
+  const tenant = getDefaultTenant();
+  rescheduleAppointment(tenant.id, id, date, startTime, staffId);
+  revalidatePath("/operator/calendar");
+  revalidatePath("/operator/dashboard");
+}
+
+/** Reschedule a public booking identified by its ref. Returns the new ref echo. */
+export async function rescheduleByRef(
+  ref: string,
+  date: string,
+  startTime: string,
+  staffId: string,
+): Promise<{ ok: boolean }> {
+  const tenant = getDefaultTenant();
+  const appt = getAppointmentByRef(tenant.id, ref);
+  if (!appt) return { ok: false };
+  rescheduleAppointment(tenant.id, appt.id, date, startTime, staffId);
+  revalidatePath("/operator/calendar");
+  revalidatePath("/operator/dashboard");
+  return { ok: true };
+}
+
+/** Cancel a public booking identified by its ref. */
+export async function cancelByRef(ref: string): Promise<{ ok: boolean }> {
+  const tenant = getDefaultTenant();
+  const appt = getAppointmentByRef(tenant.id, ref);
+  if (!appt) return { ok: false };
+  setAppointmentStatus(tenant.id, appt.id, "cancelled");
+  revalidatePath("/operator/calendar");
+  revalidatePath("/operator/dashboard");
+  return { ok: true };
 }
 
 export async function fetchSlots(

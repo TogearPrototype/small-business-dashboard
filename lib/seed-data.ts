@@ -9,7 +9,12 @@ import type { Appointment, Client, Service, Staff, Tenant } from "./types";
  * design's now-line at 11:24.
  */
 
+/** The demo's "today" — the day the now-line and dashboard revolve around. */
 export const DEMO_DATE = "2026-06-15";
+
+/** The demo's "current time" in minutes since midnight (11:24), used for the
+ *  now-line and "happening now"/"up next" splits. Only meaningful on DEMO_DATE. */
+export const DEMO_NOW_MINUTES = 11 * 60 + 24;
 
 export const tenants: Tenant[] = [
   {
@@ -138,6 +143,35 @@ export const appointments: Appointment[] = [
   { id: "a9", tenantId: "lumen", clientId: "jordan", staffId: "sasha", serviceId: "womens-cut", date: DEMO_DATE, startTime: "13:30", durationMin: 45, priceCents: 6500, status: "confirmed", payment: "Unpaid", notes: "" },
   { id: "a10", tenantId: "lumen", clientId: "grace", staffId: "noor", serviceId: "signature-facial", date: DEMO_DATE, startTime: "10:15", durationMin: 60, priceCents: 9500, status: "confirmed", payment: "Unpaid", notes: "Sensitive skin — avoid fragrance." },
   { id: "a11", tenantId: "lumen", clientId: "carla", staffId: "noor", serviceId: "deep-cleanse", date: DEMO_DATE, startTime: "16:00", durationMin: 75, priceCents: 11000, status: "confirmed", payment: "Paid", notes: "" },
+
+  // ---- Rest of the demo week (Tue Jun 16 – Sat Jun 20) ----
+  // Staff workdays: Maya Mon–Fri · Devin Wed–Sun · Priya Tue–Sat · Sasha Mon–Fri · Noor Mon–Thu.
+
+  // Tuesday, Jun 16
+  { id: "a12", tenantId: "lumen", clientId: "mei", staffId: "priya", serviceId: "full-color", date: "2026-06-16", startTime: "10:00", durationMin: 120, priceCents: 12000, status: "confirmed", payment: "Unpaid", notes: "" },
+  { id: "a13", tenantId: "lumen", clientId: "jordan", staffId: "sasha", serviceId: "womens-cut", date: "2026-06-16", startTime: "11:30", durationMin: 45, priceCents: 6500, status: "confirmed", payment: "Unpaid", notes: "" },
+  { id: "a14", tenantId: "lumen", clientId: "grace", staffId: "noor", serviceId: "deep-cleanse", date: "2026-06-16", startTime: "13:00", durationMin: 75, priceCents: 11000, status: "pending", payment: "Unpaid", notes: "" },
+  { id: "a15", tenantId: "lumen", clientId: "hassan", staffId: "maya", serviceId: "mens-cut", date: "2026-06-16", startTime: "15:30", durationMin: 30, priceCents: 4000, status: "confirmed", payment: "Unpaid", notes: "" },
+
+  // Wednesday, Jun 17
+  { id: "a16", tenantId: "lumen", clientId: "elena", staffId: "priya", serviceId: "gloss", date: "2026-06-17", startTime: "10:30", durationMin: 45, priceCents: 5500, status: "confirmed", payment: "Unpaid", notes: "" },
+  { id: "a17", tenantId: "lumen", clientId: "tom", staffId: "devin", serviceId: "mens-cut", date: "2026-06-17", startTime: "09:30", durationMin: 30, priceCents: 4000, status: "confirmed", payment: "Unpaid", notes: "" },
+  { id: "a18", tenantId: "lumen", clientId: "owen", staffId: "maya", serviceId: "keratin", date: "2026-06-17", startTime: "13:00", durationMin: 90, priceCents: 16000, status: "confirmed", payment: "Unpaid", notes: "" },
+  { id: "a19", tenantId: "lumen", clientId: "carla", staffId: "noor", serviceId: "signature-facial", date: "2026-06-17", startTime: "11:00", durationMin: 60, priceCents: 9500, status: "confirmed", payment: "Paid", notes: "" },
+
+  // Thursday, Jun 18 — Balayage with Priya 10:30 (the slot the booking demo lands on)
+  { id: "a20", tenantId: "lumen", clientId: "bianca", staffId: "priya", serviceId: "balayage", date: "2026-06-18", startTime: "10:30", durationMin: 180, priceCents: 18000, status: "confirmed", payment: "Unpaid", notes: "" },
+  { id: "a21", tenantId: "lumen", clientId: "lucas", staffId: "sasha", serviceId: "womens-cut", date: "2026-06-18", startTime: "14:00", durationMin: 45, priceCents: 6500, status: "pending", payment: "Unpaid", notes: "" },
+  { id: "a22", tenantId: "lumen", clientId: "grace", staffId: "noor", serviceId: "signature-facial", date: "2026-06-18", startTime: "16:00", durationMin: 60, priceCents: 9500, status: "confirmed", payment: "Unpaid", notes: "Sensitive skin — avoid fragrance." },
+
+  // Friday, Jun 19
+  { id: "a23", tenantId: "lumen", clientId: "mei", staffId: "priya", serviceId: "balayage", date: "2026-06-19", startTime: "11:00", durationMin: 180, priceCents: 18000, status: "confirmed", payment: "Unpaid", notes: "" },
+  { id: "a24", tenantId: "lumen", clientId: "jordan", staffId: "maya", serviceId: "womens-cut", date: "2026-06-19", startTime: "09:30", durationMin: 45, priceCents: 6500, status: "confirmed", payment: "Paid", notes: "" },
+  { id: "a25", tenantId: "lumen", clientId: "ravi", staffId: "devin", serviceId: "mens-cut", date: "2026-06-19", startTime: "15:00", durationMin: 30, priceCents: 4000, status: "pending", payment: "Unpaid", notes: "Confirm by text — prior no-shows." },
+
+  // Saturday, Jun 20 (Maya & Sasha off; Priya & Devin in)
+  { id: "a26", tenantId: "lumen", clientId: "elena", staffId: "priya", serviceId: "full-color", date: "2026-06-20", startTime: "10:00", durationMin: 120, priceCents: 12000, status: "confirmed", payment: "Unpaid", notes: "" },
+  { id: "a27", tenantId: "lumen", clientId: "hassan", staffId: "devin", serviceId: "mens-cut", date: "2026-06-20", startTime: "12:30", durationMin: 30, priceCents: 4000, status: "confirmed", payment: "Unpaid", notes: "" },
 ];
 
 /** Past visits per client, for the client profile history view. */

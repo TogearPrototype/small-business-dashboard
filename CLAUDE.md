@@ -67,8 +67,15 @@ queries against `lib/db/` — **components and actions should not change.**
 - `lib/db/schema.ts` — Drizzle/Neon schema (shared-schema multi-tenancy; RLS
   policy sketch in comments). `lib/db/index.ts` gates the connection on
   `USE_DATABASE`. `lib/db/seed.ts` loads the demo tenant into Neon.
-- `app/actions.ts` — server actions (`changeAppointmentStatus`, `submitBooking`,
-  `fetchSlots`, `saveBranding`). These call the store and `revalidatePath`.
+- `app/actions.ts` — server actions: `changeAppointmentStatus`, `submitBooking`,
+  `fetchSlots`, `rescheduleAppt` (operator), `rescheduleByRef` / `cancelByRef`
+  (public, by booking ref), `saveBranding`. These call the store and
+  `revalidatePath`.
+
+Booking references (`bookingRef` in `lib/store.ts`) are deterministic —
+`<SLUG3>-<4 digits of the appt id>`, e.g. `LUM-0020`. The public Manage-booking
+flow resolves an appointment from its ref (`getAppointmentByRef`,
+case-insensitive).
 
 Important quirk: in seed data **`tenantId` equals the tenant `slug`** ("lumen").
 The store is keyed accordingly. Real UUIDs arrive when Neon is wired (the seed
@@ -84,19 +91,32 @@ custom domains go live.
   the default; replace with the auth session's tenant) and sets `--brand`. Pages:
   `dashboard`, `calendar`, `clients`, `services`, `staff`, `settings`.
 - `app/book/[slug]/*` — public booking site for one tenant, resolved from the
-  slug; 404s on unknown slugs.
+  slug; 404s on unknown slugs. `page.tsx` is the booking flow; `manage/page.tsx`
+  is the no-account Manage-booking screen (`?ref=<bookingRef>`; shows a lookup
+  form when the ref is missing/invalid).
 
 ## Component conventions
 
 - Server components fetch from the store and pass plain data down; mark
-  interactive pieces `"use client"` (calendar grid + slide-over, clients
-  selector, booking flow, branding settings, new-appointment modal).
-- The calendar (`components/operator/CalendarDayView.tsx`) is the signature
-  screen: absolute-positioned appointment blocks on a column-per-staff time grid
-  (`HOUR_PX = 56`, day starts 09:00). The open appointment is driven by the
-  `?appt=<id>` search param; the new-appointment modal by `?new=1`.
-- The demo "now" is hard-coded to **11:24 on 2026-06-15** (`NOW_MINUTES`,
-  `DEMO_DATE`) to match the design. Replace with real time when going live.
+  interactive pieces `"use client"` (calendar + slide-over, clients selector,
+  booking flow, manage-booking, branding settings, new-appointment modal).
+- The calendar lives in `components/operator/Calendar.tsx` (orchestrator) with a
+  `DayGrid` (column-per-staff) and `WeekGrid` (column-per-day) plus the extracted
+  `AppointmentPanel.tsx` slide-over. It is **URL-driven**: `?date=<iso>` (default
+  `DEMO_DATE`), `?view=day|week`, `?appt=<id>` (open slide-over), `?new=1`
+  (new-appointment modal). Nav/Today/Day-Week toggle just rewrite these params.
+  Grid math: `HOUR_PX = 56`, day window 09:00–18:00.
+- Date math on `YYYY-MM-DD` strings uses the **UTC-based helpers in `lib/utils.ts`**
+  (`addDays`, `weekDates`, `weekdayOf`, `formatDateLabel`, …). Don't parse date
+  strings with `new Date(iso + "T00:00:00")` (local time) — it drifts by a day in
+  some timezones. Use the helpers, which pin to UTC.
+- The demo clock is centralized in `lib/seed-data.ts`: `DEMO_DATE` (2026-06-15)
+  and `DEMO_NOW_MINUTES` (11:24). The now-line only renders on `DEMO_DATE`.
+  Replace these with real time when going live.
+- Empty/loading/error UI: `components/ui/States.tsx` (`EmptyState`, `ErrorState`,
+  `SkeletonList`, `SlotSkeleton`). Used by the calendar (clear day), clients
+  (no clients / no search matches), and all three slot pickers while loading.
+- The `.ics` "Add to calendar" download is built by `buildIcs` in `lib/utils.ts`.
 - Styling is Tailwind utilities; exact pixel values from the design are kept as
   arbitrary values (e.g. `text-[13.5px]`, `rounded-[13px]`) to stay faithful.
 
