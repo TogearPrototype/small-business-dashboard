@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+/*
+  Design tokens for the Lumen scheduling platform.
+  The single white-label lever is --brand: every tinted element (now-line,
+  primary buttons, selected slots, active nav) reads from it. Swap it per
+  tenant and the whole product family recolors; layout/type/spacing never move.
+*/
+@theme {
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), var(--font-manrope), sans-serif;
+
+  /* Neutral surface palette — shared by operator app + booking site */
+  --color-ink: #2b2a2e;
+  --color-ink-soft: #56545c;
+  --color-ink-faint: #87858f;
+  --color-ink-ghost: #a1a1aa;
+  --color-canvas: #f5f3f6;
+  --color-surface: #ffffff;
+  --color-line: #e9e7ea;
+  --color-line-soft: #f3f1f4;
+  --color-field: #faf9fb;
+
+  /* Appointment status rails — neutral hues that survive any brand color */
+  --color-status-confirmed: #4f9b74;
+  --color-status-pending: #c79338;
+  --color-status-completed: #a8a8b0;
+  --color-status-noshow: #c06a54;
+  --color-status-cancelled: #d4d4d8;
+}
+
+:root {
+  /* Default tenant brand (Lumen plum). Overridden per-tenant at runtime via
+     an inline style on <html>/<body> in the tenant layout. */
+  --brand: #6d4a63;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+::selection {
+  background: color-mix(in oklch, var(--brand) 22%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Motion — mirrors the design's micro-interactions */
+@keyframes nowpulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes panelin {
+  from {
+    transform: translateX(22px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes fadein {
+  from {
+    transform: translateY(7px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes sheetin {
+  from {
+    transform: translateY(16px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.now-dot {
+  animation: nowpulse 2.4s ease-in-out infinite;
+}
+.panel-in {
+  animation: panelin 0.26s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+.fade-in {
+  animation: fadein 0.2s ease;
+}
+.sheet-in {
+  animation: sheetin 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .now-dot,
+  .panel-in,
+  .fade-in,
+  .sheet-in {
+    animation: none;
+  }
+}
+
+/* Brand-driven utility shorthands used across both surfaces */
+.bg-brand {
+  background: var(--brand);
+}
+.text-brand {
+  color: var(--brand);
+}
+.border-brand {
+  border-color: var(--brand);
+}
+.bg-brand-tint {
+  background: color-mix(in oklch, var(--brand) 8%, white);
+}
+.ring-brand {
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--brand);
+}

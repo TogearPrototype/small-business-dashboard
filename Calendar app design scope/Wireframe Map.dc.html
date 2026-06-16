@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #e4e4e7; }
+  :root { --accent: #5b5b66; }
+  ::selection { background: color-mix(in oklch, var(--accent) 22%, transparent); }
+  .wf-data { font-variant-numeric: tabular-nums lining-nums; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @keyframes nowpulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+  .now-dot { animation: nowpulse 2.4s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .now-dot { animation: none; } }
+</style>
+</helmet>
+<div style="--accent: {{ accent }}; min-height: 100vh; background: #e4e4e7; font-family: Manrope, -apple-system, sans-serif; color: #2a2a2e; padding: 56px 64px 120px; box-sizing: border-box; -webkit-font-smoothing: antialiased;">
+
+  <header style="max-width: 920px; margin-bottom: 8px;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px;">
+      <div style="width: 30px; height: 30px; border-radius: 8px; background: var(--accent); display: flex; align-items: center; justify-content: center; color: #fff; font: 800 15px Manrope, sans-serif;">L</div>
+      <div style="font: 600 13px 'JetBrains Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: #71717a;">Lumen Studio · Scheduling Platform</div>
+    </div>
+    <h1 style="font: 800 40px/1.05 Manrope, sans-serif; margin: 0 0 14px; letter-spacing: -0.02em;">Wireframe map</h1>
+    <p style="font: 400 16px/1.6 Manrope, sans-serif; color: #52525b; margin: 0; text-wrap: pretty;">Mid-fi, grayscale, real data. Structure and flow only — no final styling yet. The single tinted element across every screen (the “now” line, primary buttons, selected slots) is driven by one <span style="font-family: 'JetBrains Mono', monospace; font-size: 13.5px; background: #f4f4f5; padding: 1px 6px; border-radius: 5px; border: 1px solid #d4d4d8;">--brand</span> token — proving color is swappable while layout, type and rhythm carry the identity.</p>
+  </header>
+
+  <!-- LEGEND -->
+  <section style="margin-top: 38px; display: flex; gap: 18px; flex-wrap: wrap; align-items: stretch;">
+    <div style="background: #fff; border: 1px solid #d4d4d8; border-radius: 14px; padding: 18px 22px; min-width: 360px;">
+      <div style="font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #9a9aa2; margin-bottom: 14px;">Appointment status key</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px 22px;">
+        <div style="display: flex; align-items: center; gap: 10px; font: 500 13.5px Manrope, sans-serif; color: #3f3f46;"><span style="width: 14px; height: 14px; border-radius: 4px; background: #3f3f46;"></span>Confirmed</div>
+        <div style="display: flex; align-items: center; gap: 10px; font: 500 13.5px Manrope, sans-serif; color: #3f3f46;"><span style="width: 14px; height: 14px; border-radius: 4px; border: 1.5px dashed #9a9aa2; background: #fff;"></span>Pending</div>
+        <div style="display: flex; align-items: center; gap: 10px; font: 500 13.5px Manrope, sans-serif; color: #3f3f46;"><span style="width: 14px; height: 14px; border-radius: 4px; background: #d4d4d8; display: flex; align-items: center; justify-content: center; font: 700 9px Manrope; color: #52525b;">✓</span>Completed</div>
+        <div style="display: flex; align-items: center; gap: 10px; font: 500 13.5px Manrope, sans-serif; color: #3f3f46;"><span style="width: 14px; height: 14px; border-radius: 4px; background: repeating-linear-gradient(45deg, #c4c4c8 0 3px, #ededef 3px 6px);"></span>No-show</div>
+        <div style="display: flex; align-items: center; gap: 10px; font: 500 13.5px Manrope, sans-serif; color: #a1a1aa; text-decoration: line-through;"><span style="width: 14px; height: 14px; border-radius: 4px; border: 1.5px solid #d4d4d8; background: #fafafa;"></span>Cancelled</div>
+        <div style="display: flex; align-items: center; gap: 10px; font: 500 13.5px Manrope, sans-serif; color: #3f3f46;"><span class="now-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--accent);"></span>Now line</div>
+      </div>
+    </div>
+    <div style="background: #fff; border: 1px solid #d4d4d8; border-radius: 14px; padding: 18px 22px; flex: 1; min-width: 320px;">
+      <div style="font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #9a9aa2; margin-bottom: 14px;">Type system (geometric · tabular figures for data)</div>
+      <div style="display: flex; flex-direction: column; gap: 7px;">
+        <div style="display: flex; align-items: baseline; gap: 14px;"><span style="font: 800 26px Manrope; letter-spacing: -0.02em;">Display 800</span><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa;">screen titles</span></div>
+        <div style="display: flex; align-items: baseline; gap: 14px;"><span style="font: 600 16px Manrope;">Body / UI 600·500·400</span><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa;">labels &amp; content</span></div>
+        <div style="display: flex; align-items: baseline; gap: 14px;"><span class="wf-data" style="font: 600 16px Manrope;">09:30 · $120.00 · 78%</span><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa;">tabular lining figures</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 01 · DASHBOARD ============ -->
+  <section style="margin-top: 72px;">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px;">
+      <h2 style="font: 800 24px Manrope; margin: 0; letter-spacing: -0.01em;">01 · Dashboard</h2>
+      <span style="font: 500 13px 'JetBrains Mono', monospace; color: #9a9aa2;">today at a glance — the schedule is the hero, not a wall of stat cards · 3 directions</span>
+    </div>
+    <div style="display: flex; gap: 44px; align-items: flex-start;">
+
+      <!-- DIR A: schedule-centric -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">A · Schedule-centric</div>
+        <div style="width: 1040px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05); display: flex;">
+          <!-- sidebar -->
+          <aside style="width: 176px; flex-shrink: 0; border-right: 1px solid #ededef; padding: 18px 14px; display: flex; flex-direction: column; gap: 4px; background: #fbfbfc;">
+            <div style="display: flex; align-items: center; gap: 9px; padding: 4px 8px 16px;"><span style="width: 24px; height: 24px; border-radius: 7px; background: var(--accent); color: #fff; font: 800 12px Manrope; display: flex; align-items: center; justify-content: center;">L</span><span style="font: 700 15px Manrope;">Lumen</span></div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; background: #f0f0f2; color: #2a2a2e; font: 600 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 4px; background: #3f3f46;"></span>Dashboard</div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid #b4b4ba;"></span>Calendar</div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid #b4b4ba;"></span>Clients</div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid #b4b4ba;"></span>Services</div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid #b4b4ba;"></span>Staff</div>
+            <div style="margin-top: auto; display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid #b4b4ba;"></span>Settings</div>
+            <div style="display: flex; align-items: center; gap: 9px; padding: 10px 8px 2px; border-top: 1px solid #ededef; margin-top: 8px;"><span style="width: 26px; height: 26px; border-radius: 50%; background: #e4e4e7;"></span><div style="display: flex; flex-direction: column;"><span style="font: 600 12.5px Manrope;">Maya Chen</span><span style="font: 500 10.5px 'JetBrains Mono', monospace; color: #a1a1aa;">Owner</span></div></div>
+          </aside>
+          <!-- main -->
+          <div style="flex: 1; padding: 24px 28px 30px;">
+            <!-- topbar -->
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px;">
+              <div>
+                <div style="font: 500 12px 'JetBrains Mono', monospace; color: #a1a1aa; letter-spacing: .06em; text-transform: uppercase;">Monday</div>
+                <div class="wf-data" style="font: 800 26px Manrope; letter-spacing: -0.02em;">June 15, 2026</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 230px; height: 38px; border: 1px solid #d4d4d8; border-radius: 9px; display: flex; align-items: center; gap: 9px; padding: 0 12px; color: #a1a1aa; font: 500 13px Manrope;"><span style="width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #c4c4c8;"></span>Search clients, bookings…</div>
+                <div style="height: 38px; padding: 0 16px; border-radius: 9px; background: var(--accent); color: #fff; display: flex; align-items: center; gap: 8px; font: 600 13.5px Manrope;"><span style="font-size: 16px; line-height: 1;">+</span>New appointment</div>
+              </div>
+            </div>
+            <!-- slim stat strip -->
+            <div class="wf-data" style="display: flex; gap: 0; border: 1px solid #ededef; border-radius: 12px; overflow: hidden; margin-bottom: 24px;">
+              <div style="flex: 1; padding: 14px 18px; border-right: 1px solid #ededef;"><div style="font: 500 11.5px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase; letter-spacing: .06em;">Bookings today</div><div style="font: 700 22px Manrope; margin-top: 3px;">14</div></div>
+              <div style="flex: 1; padding: 14px 18px; border-right: 1px solid #ededef;"><div style="font: 500 11.5px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase; letter-spacing: .06em;">Projected revenue</div><div style="font: 700 22px Manrope; margin-top: 3px;">$1,485</div></div>
+              <div style="flex: 1; padding: 14px 18px; border-right: 1px solid #ededef;"><div style="font: 500 11.5px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase; letter-spacing: .06em;">Staff utilization</div><div style="font: 700 22px Manrope; margin-top: 3px;">78%</div></div>
+              <div style="flex: 1; padding: 14px 18px;"><div style="font: 500 11.5px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase; letter-spacing: .06em;">Open slots</div><div style="font: 700 22px Manrope; margin-top: 3px;">9</div></div>
+            </div>
+            <!-- timeline hero -->
+            <div style="font: 700 14px Manrope; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;"><span>Today’s schedule</span><span style="font: 500 12px 'JetBrains Mono', monospace; color: #a1a1aa;">5 staff · 09:00–18:00</span></div>
+            <div style="display: flex; flex-direction: column;">
+              <!-- appt row -->
+              <div style="display: flex; gap: 16px; align-items: stretch; padding: 11px 0; border-top: 1px solid #f0f0f2;"><div class="wf-data" style="width: 56px; flex-shrink: 0; font: 600 14px Manrope; color: #52525b; padding-top: 2px;">09:00</div><div style="width: 4px; border-radius: 3px; background: #3f3f46;"></div><div style="flex: 1; display: flex; align-items: center; justify-content: space-between;"><div><div style="font: 600 14px Manrope;">Elena Marsh</div><div style="font: 500 12.5px Manrope; color: #71717a;">Balayage · Priya Anand · 180 min</div></div><span style="font: 600 11.5px Manrope; color: #3f3f46; display: flex; align-items: center; gap: 6px;"><span style="width: 8px; height: 8px; border-radius: 2px; background: #3f3f46;"></span>Confirmed</span></div></div>
+              <div style="display: flex; gap: 16px; align-items: stretch; padding: 11px 0; border-top: 1px solid #f0f0f2;"><div class="wf-data" style="width: 56px; flex-shrink: 0; font: 600 14px Manrope; color: #52525b; padding-top: 2px;">09:30</div><div style="width: 4px; border-radius: 3px; background: #d4d4d8;"></div><div style="flex: 1; display: flex; align-items: center; justify-content: space-between;"><div><div style="font: 600 14px Manrope; color: #71717a;">Tom Whitfield</div><div style="font: 500 12.5px Manrope; color: #a1a1aa;">Men’s Cut · Devin Brooks · 30 min</div></div><span style="font: 600 11.5px Manrope; color: #71717a; display: flex; align-items: center; gap: 6px;"><span style="width: 13px; height: 13px; border-radius: 3px; background: #d4d4d8; display: flex; align-items: center; justify-content: center; font: 700 8px Manrope; color: #52525b;">✓</span>Completed</span></div></div>
+              <div style="display: flex; gap: 16px; align-items: stretch; padding: 11px 0; border-top: 1px solid #f0f0f2;"><div class="wf-data" style="width: 56px; flex-shrink: 0; font: 600 14px Manrope; color: #52525b; padding-top: 2px;">10:15</div><div style="width: 4px; border-radius: 3px; background: #3f3f46;"></div><div style="flex: 1; display: flex; align-items: center; justify-content: space-between;"><div><div style="font: 600 14px Manrope;">Grace Lin</div><div style="font: 500 12.5px Manrope; color: #71717a;">Signature Facial · Noor Haddad · 60 min</div></div><span style="font: 600 11.5px Manrope; color: #3f3f46; display: flex; align-items: center; gap: 6px;"><span style="width: 8px; height: 8px; border-radius: 2px; background: #3f3f46;"></span>Confirmed</span></div></div>
+              <div style="display: flex; gap: 16px; align-items: stretch; padding: 11px 0; border-top: 1px solid #f0f0f2;"><div class="wf-data" style="width: 56px; flex-shrink: 0; font: 600 14px Manrope; color: #52525b; padding-top: 2px;">11:00</div><div style="width: 4px; border-radius: 3px; border: 1.5px dashed #b4b4ba;"></div><div style="flex: 1; display: flex; align-items: center; justify-content: space-between;"><div><div style="font: 600 14px Manrope;">Hassan Ali</div><div style="font: 500 12.5px Manrope; color: #71717a;">Men’s Cut · Maya Chen · 30 min</div></div><span style="font: 600 11.5px Manrope; color: #71717a; display: flex; align-items: center; gap: 6px;"><span style="width: 9px; height: 9px; border-radius: 3px; border: 1.5px dashed #9a9aa2;"></span>Pending</span></div></div>
+              <!-- now line -->
+              <div class="wf-data" style="display: flex; gap: 16px; align-items: center; padding: 5px 0;"><div style="width: 56px; flex-shrink: 0; font: 700 13px 'JetBrains Mono', monospace; color: var(--accent); text-align: right;">11:24</div><div style="flex: 1; display: flex; align-items: center; gap: 8px;"><span class="now-dot" style="width: 9px; height: 9px; border-radius: 50%; background: var(--accent);"></span><div style="flex: 1; height: 2px; background: var(--accent); border-radius: 2px;"></div></div></div>
+              <div style="display: flex; gap: 16px; align-items: stretch; padding: 11px 0; border-top: 1px solid #f0f0f2;"><div class="wf-data" style="width: 56px; flex-shrink: 0; font: 600 14px Manrope; color: #52525b; padding-top: 2px;">12:00</div><div style="width: 4px; border-radius: 3px; background: #3f3f46;"></div><div style="flex: 1; display: flex; align-items: center; justify-content: space-between;"><div><div style="font: 600 14px Manrope;">Bianca Rossi</div><div style="font: 500 12.5px Manrope; color: #71717a;">Full Color · Priya Anand · 120 min</div></div><span style="font: 600 11.5px Manrope; color: #3f3f46; display: flex; align-items: center; gap: 6px;"><span style="width: 8px; height: 8px; border-radius: 2px; background: #3f3f46;"></span>Confirmed</span></div></div>
+              <div style="display: flex; gap: 16px; align-items: stretch; padding: 11px 0; border-top: 1px solid #f0f0f2; border-bottom: 1px solid #f0f0f2;"><div class="wf-data" style="width: 56px; flex-shrink: 0; font: 600 14px Manrope; color: #52525b; padding-top: 2px;">13:30</div><div style="width: 4px; border-radius: 3px; background: #3f3f46;"></div><div style="flex: 1; display: flex; align-items: center; justify-content: space-between;"><div><div style="font: 600 14px Manrope;">Jordan Lee</div><div style="font: 500 12.5px Manrope; color: #71717a;">Women’s Cut · Sasha Romano · 45 min</div></div><span style="font: 600 11.5px Manrope; color: #3f3f46; display: flex; align-items: center; gap: 6px;"><span style="width: 8px; height: 8px; border-radius: 2px; background: #3f3f46;"></span>Confirmed</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIR B: split agenda + rail -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">B · Agenda + insight rail</div>
+        <div style="width: 1040px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05); display: flex;">
+          <aside style="width: 176px; flex-shrink: 0; border-right: 1px solid #ededef; padding: 18px 14px; display: flex; flex-direction: column; gap: 4px; background: #fbfbfc;">
+            <div style="display: flex; align-items: center; gap: 9px; padding: 4px 8px 16px;"><span style="width: 24px; height: 24px; border-radius: 7px; background: var(--accent); color: #fff; font: 800 12px Manrope; display: flex; align-items: center; justify-content: center;">L</span><span style="font: 700 15px Manrope;">Lumen</span></div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; background: #f0f0f2; color: #2a2a2e; font: 600 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 4px; background: #3f3f46;"></span>Dashboard</div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid #b4b4ba;"></span>Calendar</div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid #b4b4ba;"></span>Clients</div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid #b4b4ba;"></span>Services</div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid #b4b4ba;"></span>Staff</div>
+            <div style="margin-top: auto; display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid #b4b4ba;"></span>Settings</div>
+            <div style="display: flex; align-items: center; gap: 9px; padding: 10px 8px 2px; border-top: 1px solid #ededef; margin-top: 8px;"><span style="width: 26px; height: 26px; border-radius: 50%; background: #e4e4e7;"></span><div style="display: flex; flex-direction: column;"><span style="font: 600 12.5px Manrope;">Maya Chen</span><span style="font: 500 10.5px 'JetBrains Mono', monospace; color: #a1a1aa;">Owner</span></div></div>
+          </aside>
+          <div style="flex: 1; display: flex;">
+            <!-- agenda 2/3 -->
+            <div style="flex: 1.6; padding: 24px 24px 28px; border-right: 1px solid #ededef;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                <div><div style="font: 500 12px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase; letter-spacing: .06em;">Monday</div><div class="wf-data" style="font: 800 24px Manrope; letter-spacing: -0.02em;">June 15</div></div>
+                <div style="height: 36px; padding: 0 15px; border-radius: 9px; background: var(--accent); color: #fff; display: flex; align-items: center; gap: 7px; font: 600 13px Manrope;"><span style="font-size: 15px;">+</span>New</div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="display: flex; gap: 13px; padding: 13px 14px; border: 1px solid #ededef; border-radius: 11px; align-items: center;"><div style="width: 3px; align-self: stretch; border-radius: 3px; background: #3f3f46;"></div><div class="wf-data" style="font: 600 13.5px Manrope; color: #52525b; width: 46px;">09:00</div><div style="flex: 1;"><div style="font: 600 13.5px Manrope;">Elena Marsh</div><div style="font: 500 12px Manrope; color: #71717a;">Balayage · Priya Anand</div></div><span style="font: 600 11px Manrope; color: #3f3f46;">Confirmed</span></div>
+                <div style="display: flex; gap: 13px; padding: 13px 14px; border: 1px solid #ededef; border-radius: 11px; align-items: center; background: #fafafa;"><div style="width: 3px; align-self: stretch; border-radius: 3px; background: #d4d4d8;"></div><div class="wf-data" style="font: 600 13.5px Manrope; color: #a1a1aa; width: 46px;">09:30</div><div style="flex: 1;"><div style="font: 600 13.5px Manrope; color: #71717a;">Tom Whitfield</div><div style="font: 500 12px Manrope; color: #a1a1aa;">Men’s Cut · Devin Brooks</div></div><span style="font: 600 11px Manrope; color: #a1a1aa;">Done</span></div>
+                <div style="display: flex; gap: 13px; padding: 13px 14px; border: 1px solid #ededef; border-radius: 11px; align-items: center;"><div style="width: 3px; align-self: stretch; border-radius: 3px; background: #3f3f46;"></div><div class="wf-data" style="font: 600 13.5px Manrope; color: #52525b; width: 46px;">10:15</div><div style="flex: 1;"><div style="font: 600 13.5px Manrope;">Grace Lin</div><div style="font: 500 12px Manrope; color: #71717a;">Signature Facial · Noor Haddad</div></div><span style="font: 600 11px Manrope; color: #3f3f46;">Confirmed</span></div>
+                <!-- now -->
+                <div class="wf-data" style="display: flex; align-items: center; gap: 9px; padding: 3px 2px;"><span style="font: 700 12px 'JetBrains Mono', monospace; color: var(--accent); width: 46px;">11:24</span><span class="now-dot" style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent);"></span><div style="flex: 1; height: 2px; background: var(--accent); border-radius: 2px;"></div></div>
+                <div style="display: flex; gap: 13px; padding: 13px 14px; border: 1px dashed #c4c4c8; border-radius: 11px; align-items: center;"><div style="width: 3px; align-self: stretch; border-radius: 3px; border-left: 1.5px dashed #b4b4ba;"></div><div class="wf-data" style="font: 600 13.5px Manrope; color: #52525b; width: 46px;">11:00</div><div style="flex: 1;"><div style="font: 600 13.5px Manrope;">Hassan Ali</div><div style="font: 500 12px Manrope; color: #71717a;">Men’s Cut · Maya Chen</div></div><span style="font: 600 11px Manrope; color: #71717a;">Pending</span></div>
+                <div style="display: flex; gap: 13px; padding: 13px 14px; border: 1px solid #ededef; border-radius: 11px; align-items: center;"><div style="width: 3px; align-self: stretch; border-radius: 3px; background: #3f3f46;"></div><div class="wf-data" style="font: 600 13.5px Manrope; color: #52525b; width: 46px;">12:00</div><div style="flex: 1;"><div style="font: 600 13.5px Manrope;">Bianca Rossi</div><div style="font: 500 12px Manrope; color: #71717a;">Full Color · Priya Anand</div></div><span style="font: 600 11px Manrope; color: #3f3f46;">Confirmed</span></div>
+              </div>
+            </div>
+            <!-- insight rail 1/3 -->
+            <div style="flex: 1; padding: 24px 22px; display: flex; flex-direction: column; gap: 18px; background: #fbfbfc;">
+              <div style="font: 700 13px Manrope;">Up next</div>
+              <div style="border: 1px solid #e4e4e7; border-radius: 12px; padding: 15px; background: #fff;"><div class="wf-data" style="font: 700 16px Manrope; color: var(--accent);">12:00</div><div style="font: 600 14px Manrope; margin-top: 4px;">Bianca Rossi</div><div style="font: 500 12.5px Manrope; color: #71717a;">Full Color · Priya Anand · $120</div></div>
+              <div style="height: 1px; background: #ededef;"></div>
+              <div style="font: 700 13px Manrope;">Today</div>
+              <div class="wf-data" style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;"><span style="font: 500 13px Manrope; color: #71717a;">Bookings</span><span style="font: 700 18px Manrope;">14</span></div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline;"><span style="font: 500 13px Manrope; color: #71717a;">Revenue</span><span style="font: 700 18px Manrope;">$1,485</span></div>
+                <div><div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;"><span style="font: 500 13px Manrope; color: #71717a;">Utilization</span><span style="font: 700 18px Manrope;">78%</span></div><div style="height: 6px; background: #ededef; border-radius: 4px; overflow: hidden;"><div style="width: 78%; height: 100%; background: var(--accent); border-radius: 4px;"></div></div></div>
+              </div>
+              <div style="margin-top: auto; display: flex; flex-direction: column; gap: 8px;"><div style="height: 36px; border: 1px solid #d4d4d8; border-radius: 9px; display: flex; align-items: center; justify-content: center; font: 600 13px Manrope; color: #3f3f46;">Open calendar</div><div style="height: 36px; border: 1px solid #d4d4d8; border-radius: 9px; display: flex; align-items: center; justify-content: center; font: 600 13px Manrope; color: #3f3f46;">Add client</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIR C: now/next focus -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">C · Now / Next focus</div>
+        <div style="width: 1040px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05); display: flex;">
+          <aside style="width: 176px; flex-shrink: 0; border-right: 1px solid #ededef; padding: 18px 14px; display: flex; flex-direction: column; gap: 4px; background: #fbfbfc;">
+            <div style="display: flex; align-items: center; gap: 9px; padding: 4px 8px 16px;"><span style="width: 24px; height: 24px; border-radius: 7px; background: var(--accent); color: #fff; font: 800 12px Manrope; display: flex; align-items: center; justify-content: center;">L</span><span style="font: 700 15px Manrope;">Lumen</span></div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; background: #f0f0f2; color: #2a2a2e; font: 600 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 4px; background: #3f3f46;"></span>Dashboard</div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid #b4b4ba;"></span>Calendar</div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid #b4b4ba;"></span>Clients</div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid #b4b4ba;"></span>Services</div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid #b4b4ba;"></span>Staff</div>
+            <div style="margin-top: auto; display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 9px; color: #71717a; font: 500 13.5px Manrope;"><span style="width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid #b4b4ba;"></span>Settings</div>
+            <div style="display: flex; align-items: center; gap: 9px; padding: 10px 8px 2px; border-top: 1px solid #ededef; margin-top: 8px;"><span style="width: 26px; height: 26px; border-radius: 50%; background: #e4e4e7;"></span><div style="display: flex; flex-direction: column;"><span style="font: 600 12.5px Manrope;">Maya Chen</span><span style="font: 500 10.5px 'JetBrains Mono', monospace; color: #a1a1aa;">Owner</span></div></div>
+          </aside>
+          <div style="flex: 1; padding: 24px 28px 30px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;"><div class="wf-data" style="font: 800 24px Manrope; letter-spacing: -0.02em;">Good morning, Maya</div><div style="height: 36px; padding: 0 15px; border-radius: 9px; background: var(--accent); color: #fff; display: flex; align-items: center; gap: 7px; font: 600 13px Manrope;"><span style="font-size: 15px;">+</span>New appointment</div></div>
+            <!-- happening now -->
+            <div style="border: 1.5px solid var(--accent); border-radius: 14px; padding: 20px; margin-bottom: 18px; display: flex; gap: 20px; align-items: center;">
+              <div style="flex-shrink: 0;"><div style="font: 600 11px 'JetBrains Mono', monospace; color: var(--accent); text-transform: uppercase; letter-spacing: .1em; display: flex; align-items: center; gap: 6px;"><span class="now-dot" style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent);"></span>Happening now</div><div class="wf-data" style="font: 800 30px Manrope; letter-spacing: -0.02em; margin-top: 6px;">Bianca Rossi</div><div style="font: 500 13.5px Manrope; color: #52525b;">Full Color · Priya Anand · started 12:00</div></div>
+              <div class="wf-data" style="margin-left: auto; text-align: right;"><div style="font: 500 12px Manrope; color: #71717a;">Ends 14:00</div><div style="height: 6px; width: 130px; background: #ededef; border-radius: 4px; margin-top: 8px; overflow: hidden;"><div style="width: 42%; height: 100%; background: var(--accent);"></div></div></div>
+            </div>
+            <div style="display: flex; gap: 18px;">
+              <!-- up next list -->
+              <div style="flex: 1.4;">
+                <div style="font: 700 13px Manrope; margin-bottom: 12px;">Up next</div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <div style="display: flex; gap: 12px; padding: 12px 14px; border: 1px solid #ededef; border-radius: 11px; align-items: center;"><div class="wf-data" style="font: 700 14px Manrope; color: #52525b; width: 44px;">13:30</div><div style="flex: 1;"><div style="font: 600 13.5px Manrope;">Jordan Lee</div><div style="font: 500 12px Manrope; color: #71717a;">Women’s Cut · Sasha Romano</div></div><span style="font: 600 11px Manrope; color: #3f3f46;">Confirmed</span></div>
+                  <div style="display: flex; gap: 12px; padding: 12px 14px; border: 1px solid #ededef; border-radius: 11px; align-items: center;"><div class="wf-data" style="font: 700 14px Manrope; color: #52525b; width: 44px;">14:15</div><div style="flex: 1;"><div style="font: 600 13.5px Manrope;">Mei Tanaka</div><div style="font: 500 12px Manrope; color: #71717a;">Gloss / Toner · Priya Anand</div></div><span style="font: 600 11px Manrope; color: #3f3f46;">Confirmed</span></div>
+                  <div style="display: flex; gap: 12px; padding: 12px 14px; border: 1px dashed #c4c4c8; border-radius: 11px; align-items: center;"><div class="wf-data" style="font: 700 14px Manrope; color: #52525b; width: 44px;">15:00</div><div style="flex: 1;"><div style="font: 600 13.5px Manrope;">Owen Pratt</div><div style="font: 500 12px Manrope; color: #71717a;">Keratin Treatment · Maya Chen</div></div><span style="font: 600 11px Manrope; color: #71717a;">Pending</span></div>
+                </div>
+              </div>
+              <!-- mini stats -->
+              <div class="wf-data" style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+                <div style="font: 700 13px Manrope; margin-bottom: 2px;">Today</div>
+                <div style="border: 1px solid #ededef; border-radius: 11px; padding: 13px 15px; display: flex; justify-content: space-between; align-items: center;"><span style="font: 500 12.5px Manrope; color: #71717a;">Bookings</span><span style="font: 700 18px Manrope;">14</span></div>
+                <div style="border: 1px solid #ededef; border-radius: 11px; padding: 13px 15px; display: flex; justify-content: space-between; align-items: center;"><span style="font: 500 12.5px Manrope; color: #71717a;">Revenue</span><span style="font: 700 18px Manrope;">$1,485</span></div>
+                <div style="border: 1px solid #ededef; border-radius: 11px; padding: 13px 15px; display: flex; justify-content: space-between; align-items: center;"><span style="font: 500 12.5px Manrope; color: #71717a;">Utilization</span><span style="font: 700 18px Manrope;">78%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 02 · CALENDAR ============ -->
+  <section style="margin-top: 72px;">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px;">
+      <h2 style="font: 800 24px Manrope; margin: 0; letter-spacing: -0.01em;">02 · Calendar</h2>
+      <span style="font: 500 13px 'JetBrains Mono', monospace; color: #9a9aa2;">the signature screen — time grid, status at a glance, live now-line · 3 directions</span>
+    </div>
+    <div style="display: flex; gap: 44px; align-items: flex-start;">
+
+      <!-- DIR A: WEEK GRID, column per day -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">A · Week view — column per day</div>
+        <div style="width: 1180px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05); display: flex;">
+          <aside style="width: 60px; flex-shrink: 0; border-right: 1px solid #ededef; padding: 16px 0; display: flex; flex-direction: column; align-items: center; gap: 14px; background: #fbfbfc;">
+            <span style="width: 26px; height: 26px; border-radius: 8px; background: var(--accent); color: #fff; font: 800 13px Manrope; display: flex; align-items: center; justify-content: center;">L</span>
+            <span style="width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid #b4b4ba;"></span>
+            <span style="width: 20px; height: 20px; border-radius: 5px; background: #3f3f46;"></span>
+            <span style="width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #b4b4ba;"></span>
+            <span style="width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid #b4b4ba;"></span>
+            <span style="width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #b4b4ba;"></span>
+            <span style="margin-top: auto; width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid #b4b4ba;"></span>
+          </aside>
+          <div style="flex: 1; display: flex; flex-direction: column;">
+            <!-- topbar -->
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid #ededef;">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="display: flex; border: 1px solid #d4d4d8; border-radius: 9px; overflow: hidden; font: 600 13px Manrope;"><span style="padding: 7px 14px; color: #71717a;">Day</span><span style="padding: 7px 14px; background: #f0f0f2; color: #2a2a2e; border-left: 1px solid #d4d4d8;">Week</span></div>
+                <div style="display: flex; align-items: center; gap: 10px;"><span style="width: 30px; height: 30px; border: 1px solid #d4d4d8; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #71717a;">‹</span><span class="wf-data" style="font: 700 15px Manrope;">Jun 15 – 21</span><span style="width: 30px; height: 30px; border: 1px solid #d4d4d8; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #71717a;">›</span><span style="font: 600 13px Manrope; color: #71717a; padding: 0 4px;">Today</span></div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="height: 34px; padding: 0 13px; border: 1px solid #d4d4d8; border-radius: 9px; display: flex; align-items: center; gap: 7px; font: 600 13px Manrope; color: #3f3f46;"><span style="width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid #b4b4ba;"></span>All staff</div>
+                <div style="height: 34px; padding: 0 14px; border-radius: 9px; background: var(--accent); color: #fff; display: flex; align-items: center; gap: 7px; font: 600 13px Manrope;"><span style="font-size: 15px;">+</span>New</div>
+              </div>
+            </div>
+            <!-- day headers -->
+            <div style="display: flex; border-bottom: 1px solid #ededef; padding-left: 52px;">
+              <div style="flex: 1; text-align: center; padding: 10px 0; border-left: 1px solid #f0f0f2;"><div style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase;">Mon</div><div class="wf-data" style="font: 700 16px Manrope; color: var(--accent);">15</div></div>
+              <div style="flex: 1; text-align: center; padding: 10px 0; border-left: 1px solid #f0f0f2;"><div style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase;">Tue</div><div class="wf-data" style="font: 700 16px Manrope;">16</div></div>
+              <div style="flex: 1; text-align: center; padding: 10px 0; border-left: 1px solid #f0f0f2;"><div style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase;">Wed</div><div class="wf-data" style="font: 700 16px Manrope;">17</div></div>
+              <div style="flex: 1; text-align: center; padding: 10px 0; border-left: 1px solid #f0f0f2;"><div style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase;">Thu</div><div class="wf-data" style="font: 700 16px Manrope;">18</div></div>
+              <div style="flex: 1; text-align: center; padding: 10px 0; border-left: 1px solid #f0f0f2;"><div style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase;">Fri</div><div class="wf-data" style="font: 700 16px Manrope;">19</div></div>
+              <div style="flex: 1; text-align: center; padding: 10px 0; border-left: 1px solid #f0f0f2;"><div style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase;">Sat</div><div class="wf-data" style="font: 700 16px Manrope;">20</div></div>
+              <div style="flex: 1; text-align: center; padding: 10px 0; border-left: 1px solid #f0f0f2;"><div style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase;">Sun</div><div class="wf-data" style="font: 700 16px Manrope; color: #c4c4c8;">21</div></div>
+            </div>
+            <!-- grid -->
+            <div style="display: flex; height: 448px; overflow: hidden;">
+              <div class="wf-data" style="width: 52px; flex-shrink: 0; position: relative;">
+                <div style="height: 64px; text-align: right; padding-right: 8px;"><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -6px;">09:00</span></div>
+                <div style="height: 64px; text-align: right; padding-right: 8px;"><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -6px;">11:00</span></div>
+                <div style="height: 64px; text-align: right; padding-right: 8px;"><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -6px;">13:00</span></div>
+                <div style="height: 64px; text-align: right; padding-right: 8px;"><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -6px;">15:00</span></div>
+                <div style="height: 64px; text-align: right; padding-right: 8px;"><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -6px;">17:00</span></div>
+              </div>
+              <div style="flex: 1; display: flex; position: relative; background: repeating-linear-gradient(to bottom, transparent 0, transparent 63px, #f3f3f4 63px, #f3f3f4 64px);">
+                <!-- Mon (today) with now line -->
+                <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2;">
+                  <div style="position: absolute; top: 0; left: 3px; right: 3px; height: 84px; border-radius: 7px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 5px 7px;"><div class="wf-data" style="font: 600 11px Manrope; color: #52525b;">09:00</div><div style="font: 600 11.5px Manrope;">Elena M.</div><div style="font: 500 10px Manrope; color: #71717a;">Balayage</div></div>
+                  <div style="position: absolute; top: 96px; left: 3px; right: 3px; height: 24px; border-radius: 7px; border: 1px dashed #b4b4ba; padding: 3px 7px;"><div class="wf-data" style="font: 600 10.5px Manrope; color: #52525b;">11:00 Hassan A.</div></div>
+                  <!-- now -->
+                  <div class="now-dot" style="position: absolute; top: 76px; left: 0; right: 0; height: 2px; background: var(--accent); z-index: 5;"><span style="position: absolute; left: -4px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent);"></span></div>
+                  <div style="position: absolute; top: 196px; left: 3px; right: 3px; height: 60px; border-radius: 7px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 5px 7px;"><div class="wf-data" style="font: 600 11px Manrope; color: #52525b;">13:30 Jordan L.</div><div style="font: 500 10px Manrope; color: #71717a;">Women’s Cut</div></div>
+                </div>
+                <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2;">
+                  <div style="position: absolute; top: 32px; left: 3px; right: 3px; height: 40px; border-radius: 7px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 4px 7px;"><div class="wf-data" style="font: 600 11px Manrope; color: #52525b;">10:00 Mei T.</div></div>
+                  <div style="position: absolute; top: 224px; left: 3px; right: 3px; height: 56px; border-radius: 7px; background: repeating-linear-gradient(45deg, #ededef 0 4px, #f7f7f8 4px 8px); border: 1px solid #d4d4d8; padding: 4px 7px;"><div class="wf-data" style="font: 600 11px Manrope; color: #71717a;">14:00 No-show</div></div>
+                </div>
+                <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2;">
+                  <div style="position: absolute; top: 64px; left: 3px; right: 3px; height: 84px; border-radius: 7px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 5px 7px;"><div class="wf-data" style="font: 600 11px Manrope; color: #52525b;">11:00</div><div style="font: 600 11.5px Manrope;">Bianca R.</div><div style="font: 500 10px Manrope; color: #71717a;">Full Color</div></div>
+                </div>
+                <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2;">
+                  <div style="position: absolute; top: 0; left: 3px; right: 3px; height: 28px; border-radius: 7px; background: #ededef; border: 1px solid #d4d4d8; border-left: 3px solid #c4c4c8; padding: 3px 7px;"><div class="wf-data" style="font: 600 10.5px Manrope; color: #71717a;">09:00 ✓ Tom W.</div></div>
+                  <div style="position: absolute; top: 160px; left: 3px; right: 3px; height: 40px; border-radius: 7px; background: #fafafa; border: 1px solid #e4e4e7; padding: 4px 7px; opacity: .7;"><div class="wf-data" style="font: 500 10.5px Manrope; color: #a1a1aa; text-decoration: line-through;">13:00 Cancelled</div></div>
+                </div>
+                <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2;">
+                  <div style="position: absolute; top: 96px; left: 3px; right: 3px; height: 56px; border-radius: 7px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 5px 7px;"><div class="wf-data" style="font: 600 11px Manrope; color: #52525b;">11:30 Grace L.</div><div style="font: 500 10px Manrope; color: #71717a;">Facial</div></div>
+                </div>
+                <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2;">
+                  <div style="position: absolute; top: 128px; left: 3px; right: 3px; height: 84px; border-radius: 7px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 5px 7px;"><div class="wf-data" style="font: 600 11px Manrope; color: #52525b;">13:00 Owen P.</div><div style="font: 500 10px Manrope; color: #71717a;">Keratin</div></div>
+                </div>
+                <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2; background: #fcfcfd;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIR B: DAY VIEW, column per staff -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">B · Day view — column per staff member</div>
+        <div style="width: 1040px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05); display: flex;">
+          <aside style="width: 60px; flex-shrink: 0; border-right: 1px solid #ededef; padding: 16px 0; display: flex; flex-direction: column; align-items: center; gap: 14px; background: #fbfbfc;">
+            <span style="width: 26px; height: 26px; border-radius: 8px; background: var(--accent); color: #fff; font: 800 13px Manrope; display: flex; align-items: center; justify-content: center;">L</span>
+            <span style="width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid #b4b4ba;"></span>
+            <span style="width: 20px; height: 20px; border-radius: 5px; background: #3f3f46;"></span>
+            <span style="width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #b4b4ba;"></span>
+            <span style="width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid #b4b4ba;"></span>
+            <span style="width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #b4b4ba;"></span>
+            <span style="margin-top: auto; width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid #b4b4ba;"></span>
+          </aside>
+          <div style="flex: 1; display: flex; flex-direction: column;">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid #ededef;">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="display: flex; border: 1px solid #d4d4d8; border-radius: 9px; overflow: hidden; font: 600 13px Manrope;"><span style="padding: 7px 14px; background: #f0f0f2; color: #2a2a2e;">Day</span><span style="padding: 7px 14px; color: #71717a; border-left: 1px solid #d4d4d8;">Week</span></div>
+                <div style="display: flex; align-items: center; gap: 10px;"><span style="width: 30px; height: 30px; border: 1px solid #d4d4d8; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #71717a;">‹</span><span class="wf-data" style="font: 700 15px Manrope;">Mon, Jun 15</span><span style="width: 30px; height: 30px; border: 1px solid #d4d4d8; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #71717a;">›</span></div>
+              </div>
+              <div style="height: 34px; padding: 0 14px; border-radius: 9px; background: var(--accent); color: #fff; display: flex; align-items: center; gap: 7px; font: 600 13px Manrope;"><span style="font-size: 15px;">+</span>New appointment</div>
+            </div>
+            <!-- staff headers -->
+            <div style="display: flex; border-bottom: 1px solid #ededef; padding-left: 52px;">
+              <div style="flex: 1; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-left: 1px solid #f0f0f2;"><span style="width: 22px; height: 22px; border-radius: 50%; background: #e4e4e7;"></span><div><div style="font: 600 12.5px Manrope;">Maya</div><div style="font: 500 10px 'JetBrains Mono', monospace; color: #a1a1aa;">Stylist</div></div></div>
+              <div style="flex: 1; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-left: 1px solid #f0f0f2;"><span style="width: 22px; height: 22px; border-radius: 50%; background: #e4e4e7;"></span><div><div style="font: 600 12.5px Manrope;">Devin</div><div style="font: 500 10px 'JetBrains Mono', monospace; color: #a1a1aa;">Stylist</div></div></div>
+              <div style="flex: 1; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-left: 1px solid #f0f0f2;"><span style="width: 22px; height: 22px; border-radius: 50%; background: #e4e4e7;"></span><div><div style="font: 600 12.5px Manrope;">Priya</div><div style="font: 500 10px 'JetBrains Mono', monospace; color: #a1a1aa;">Colorist</div></div></div>
+              <div style="flex: 1; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-left: 1px solid #f0f0f2;"><span style="width: 22px; height: 22px; border-radius: 50%; background: #e4e4e7;"></span><div><div style="font: 600 12.5px Manrope;">Sasha</div><div style="font: 500 10px 'JetBrains Mono', monospace; color: #a1a1aa;">Stylist</div></div></div>
+              <div style="flex: 1; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-left: 1px solid #f0f0f2;"><span style="width: 22px; height: 22px; border-radius: 50%; background: #e4e4e7;"></span><div><div style="font: 600 12.5px Manrope;">Noor</div><div style="font: 500 10px 'JetBrains Mono', monospace; color: #a1a1aa;">Esthetician</div></div></div>
+            </div>
+            <!-- grid -->
+            <div style="display: flex; height: 504px; overflow: hidden;">
+              <div class="wf-data" style="width: 52px; flex-shrink: 0;">
+                <div style="height: 56px; text-align: right; padding-right: 8px;"><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -6px;">09:00</span></div>
+                <div style="height: 56px; text-align: right; padding-right: 8px;"><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -6px;">10:00</span></div>
+                <div style="height: 56px; text-align: right; padding-right: 8px;"><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -6px;">11:00</span></div>
+                <div style="height: 56px; text-align: right; padding-right: 8px;"><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -6px;">12:00</span></div>
+                <div style="height: 56px; text-align: right; padding-right: 8px;"><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -6px;">13:00</span></div>
+                <div style="height: 56px; text-align: right; padding-right: 8px;"><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -6px;">14:00</span></div>
+                <div style="height: 56px; text-align: right; padding-right: 8px;"><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -6px;">15:00</span></div>
+                <div style="height: 56px; text-align: right; padding-right: 8px;"><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -6px;">16:00</span></div>
+                <div style="height: 56px; text-align: right; padding-right: 8px;"><span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -6px;">17:00</span></div>
+              </div>
+              <div style="flex: 1; display: flex; position: relative; background: repeating-linear-gradient(to bottom, transparent 0, transparent 55px, #f3f3f4 55px, #f3f3f4 56px);">
+                <!-- now line across all -->
+                <div class="now-dot" style="position: absolute; top: 134px; left: 0; right: 0; height: 2px; background: var(--accent); z-index: 8; pointer-events: none;"><span style="position: absolute; left: -3px; top: -4px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent);"></span><span class="wf-data" style="position: absolute; left: -50px; top: -8px; font: 700 11px 'JetBrains Mono', monospace; color: var(--accent);">11:24</span></div>
+                <!-- Maya -->
+                <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2;">
+                  <div style="position: absolute; top: 112px; left: 3px; right: 3px; height: 24px; border-radius: 7px; border: 1px dashed #b4b4ba; padding: 3px 7px;"><div class="wf-data" style="font: 600 10.5px Manrope; color: #52525b;">11:00 Hassan A.</div></div>
+                  <div style="position: absolute; top: 336px; left: 3px; right: 3px; height: 80px; border-radius: 7px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 5px 7px;"><div class="wf-data" style="font: 600 11px Manrope; color: #52525b;">15:00</div><div style="font: 600 11.5px Manrope;">Owen Pratt</div><div style="font: 500 10px Manrope; color: #71717a;">Keratin · 90m</div></div>
+                </div>
+                <!-- Devin -->
+                <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2;">
+                  <div style="position: absolute; top: 28px; left: 3px; right: 3px; height: 24px; border-radius: 7px; background: #ededef; border: 1px solid #d4d4d8; border-left: 3px solid #c4c4c8; padding: 3px 7px;"><div class="wf-data" style="font: 600 10.5px Manrope; color: #71717a;">09:30 ✓ Tom W.</div></div>
+                  <div style="position: absolute; top: 280px; left: 3px; right: 3px; height: 24px; border-radius: 7px; background: repeating-linear-gradient(45deg, #ededef 0 4px, #f7f7f8 4px 8px); border: 1px solid #d4d4d8; padding: 3px 7px;"><div class="wf-data" style="font: 600 10.5px Manrope; color: #71717a;">14:00 No-show</div></div>
+                </div>
+                <!-- Priya -->
+                <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2;">
+                  <div style="position: absolute; top: 0; left: 3px; right: 3px; height: 164px; border-radius: 7px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 5px 7px;"><div class="wf-data" style="font: 600 11px Manrope; color: #52525b;">09:00</div><div style="font: 600 11.5px Manrope;">Elena Marsh</div><div style="font: 500 10px Manrope; color: #71717a;">Balayage · 180m</div></div>
+                  <div style="position: absolute; top: 168px; left: 3px; right: 3px; height: 108px; border-radius: 7px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 5px 7px;"><div class="wf-data" style="font: 600 11px Manrope; color: #52525b;">12:00</div><div style="font: 600 11.5px Manrope;">Bianca Rossi</div><div style="font: 500 10px Manrope; color: #71717a;">Full Color · 120m</div></div>
+                  <div style="position: absolute; top: 294px; left: 3px; right: 3px; height: 38px; border-radius: 7px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 4px 7px;"><div class="wf-data" style="font: 600 10.5px Manrope; color: #52525b;">14:15 Mei T.</div></div>
+                </div>
+                <!-- Sasha -->
+                <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2;">
+                  <div style="position: absolute; top: 252px; left: 3px; right: 3px; height: 38px; border-radius: 7px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 4px 7px;"><div class="wf-data" style="font: 600 10.5px Manrope; color: #52525b;">13:30 Jordan L.</div><div style="font: 500 10px Manrope; color: #71717a;">Women’s Cut</div></div>
+                </div>
+                <!-- Noor -->
+                <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2;">
+                  <div style="position: absolute; top: 70px; left: 3px; right: 3px; height: 52px; border-radius: 7px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 5px 7px;"><div class="wf-data" style="font: 600 11px Manrope; color: #52525b;">10:15 Grace L.</div><div style="font: 500 10px Manrope; color: #71717a;">Facial</div></div>
+                  <div style="position: absolute; top: 392px; left: 3px; right: 3px; height: 66px; border-radius: 7px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 5px 7px;"><div class="wf-data" style="font: 600 11px Manrope; color: #52525b;">16:00</div><div style="font: 600 11.5px Manrope;">Carla N.</div><div style="font: 500 10px Manrope; color: #71717a;">Deep-Cleanse</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIR C: AGENDA-HYBRID (responsive) -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">C · Agenda hybrid — list ↔ grid by width <span style="color: #c4c4c8;">(chosen base)</span></div>
+        <div style="display: flex; gap: 18px; align-items: flex-start;">
+          <!-- narrow: agenda list -->
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa;">≤ 720px — agenda list</div>
+            <div style="width: 380px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05);">
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid #ededef;"><div class="wf-data" style="font: 700 16px Manrope;">Mon, Jun 15</div><div style="height: 32px; padding: 0 12px; border-radius: 8px; background: var(--accent); color: #fff; display: flex; align-items: center; gap: 6px; font: 600 12.5px Manrope;"><span style="font-size: 14px;">+</span>New</div></div>
+              <div style="padding: 12px 18px 18px; display: flex; flex-direction: column;">
+                <div class="wf-data" style="font: 600 11px 'JetBrains Mono', monospace; color: #a1a1aa; padding: 8px 0 6px;">MORNING</div>
+                <div style="display: flex; gap: 12px; padding: 11px 0; border-top: 1px solid #f0f0f2;"><div class="wf-data" style="width: 44px; font: 600 13px Manrope; color: #52525b;">09:00</div><div style="width: 3px; border-radius: 3px; background: #3f3f46;"></div><div style="flex: 1;"><div style="font: 600 13px Manrope;">Elena Marsh</div><div style="font: 500 11.5px Manrope; color: #71717a;">Balayage · Priya</div></div></div>
+                <div style="display: flex; gap: 12px; padding: 11px 0; border-top: 1px solid #f0f0f2;"><div class="wf-data" style="width: 44px; font: 600 13px Manrope; color: #a1a1aa;">09:30</div><div style="width: 3px; border-radius: 3px; background: #d4d4d8;"></div><div style="flex: 1;"><div style="font: 600 13px Manrope; color: #71717a;">Tom Whitfield</div><div style="font: 500 11.5px Manrope; color: #a1a1aa;">Men’s Cut · Devin</div></div></div>
+                <div style="display: flex; gap: 12px; padding: 11px 0; border-top: 1px solid #f0f0f2;"><div class="wf-data" style="width: 44px; font: 600 13px Manrope; color: #52525b;">10:15</div><div style="width: 3px; border-radius: 3px; background: #3f3f46;"></div><div style="flex: 1;"><div style="font: 600 13px Manrope;">Grace Lin</div><div style="font: 500 11.5px Manrope; color: #71717a;">Facial · Noor</div></div></div>
+                <div class="wf-data" style="display: flex; align-items: center; gap: 8px; padding: 8px 0 4px;"><span style="font: 700 11px 'JetBrains Mono', monospace; color: var(--accent); width: 44px;">11:24</span><span class="now-dot" style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent);"></span><div style="flex: 1; height: 2px; background: var(--accent); border-radius: 2px;"></div></div>
+                <div class="wf-data" style="font: 600 11px 'JetBrains Mono', monospace; color: #a1a1aa; padding: 8px 0 6px;">AFTERNOON</div>
+                <div style="display: flex; gap: 12px; padding: 11px 0; border-top: 1px solid #f0f0f2;"><div class="wf-data" style="width: 44px; font: 600 13px Manrope; color: #52525b;">12:00</div><div style="width: 3px; border-radius: 3px; background: #3f3f46;"></div><div style="flex: 1;"><div style="font: 600 13px Manrope;">Bianca Rossi</div><div style="font: 500 11.5px Manrope; color: #71717a;">Full Color · Priya</div></div></div>
+                <div style="display: flex; gap: 12px; padding: 11px 0; border-top: 1px solid #f0f0f2;"><div class="wf-data" style="width: 44px; font: 600 13px Manrope; color: #52525b;">13:30</div><div style="width: 3px; border-radius: 3px; background: #3f3f46;"></div><div style="flex: 1;"><div style="font: 600 13px Manrope;">Jordan Lee</div><div style="font: 500 11.5px Manrope; color: #71717a;">Women’s Cut · Sasha</div></div></div>
+              </div>
+            </div>
+          </div>
+          <!-- wide: condensed grid -->
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa;">&gt; 720px — same data, grid</div>
+            <div style="width: 600px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05);">
+              <div style="padding: 14px 18px; border-bottom: 1px solid #ededef;"><div class="wf-data" style="font: 700 15px Manrope;">Mon, Jun 15 · all staff</div></div>
+              <div style="display: flex; height: 360px;">
+                <div class="wf-data" style="width: 44px; flex-shrink: 0;">
+                  <div style="height: 72px; text-align: right; padding-right: 6px;"><span style="font: 500 10px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -5px;">09</span></div>
+                  <div style="height: 72px; text-align: right; padding-right: 6px;"><span style="font: 500 10px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -5px;">11</span></div>
+                  <div style="height: 72px; text-align: right; padding-right: 6px;"><span style="font: 500 10px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -5px;">13</span></div>
+                  <div style="height: 72px; text-align: right; padding-right: 6px;"><span style="font: 500 10px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -5px;">15</span></div>
+                  <div style="height: 72px; text-align: right; padding-right: 6px;"><span style="font: 500 10px 'JetBrains Mono', monospace; color: #a1a1aa; position: relative; top: -5px;">17</span></div>
+                </div>
+                <div style="flex: 1; display: flex; position: relative; background: repeating-linear-gradient(to bottom, transparent 0, transparent 71px, #f3f3f4 71px, #f3f3f4 72px);">
+                  <div class="now-dot" style="position: absolute; top: 86px; left: 0; right: 0; height: 2px; background: var(--accent); z-index: 5;"><span style="position: absolute; left: -3px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent);"></span></div>
+                  <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2;"><div style="position: absolute; top: 0; left: 2px; right: 2px; height: 108px; border-radius: 6px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 4px 6px;"><div class="wf-data" style="font: 600 10px Manrope; color: #52525b;">Elena M.</div></div><div style="position: absolute; top: 108px; left: 2px; right: 2px; height: 72px; border-radius: 6px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 4px 6px;"><div class="wf-data" style="font: 600 10px Manrope; color: #52525b;">Bianca R.</div></div></div>
+                  <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2;"><div style="position: absolute; top: 18px; left: 2px; right: 2px; height: 18px; border-radius: 6px; background: #ededef; border: 1px solid #d4d4d8; padding: 2px 6px;"><div class="wf-data" style="font: 600 9px Manrope; color: #71717a;">Tom W.</div></div><div style="position: absolute; top: 252px; left: 2px; right: 2px; height: 54px; border-radius: 6px; border: 1px dashed #b4b4ba; padding: 3px 6px;"><div class="wf-data" style="font: 600 10px Manrope; color: #52525b;">Owen P.</div></div></div>
+                  <div style="flex: 1; position: relative; border-left: 1px solid #f0f0f2;"><div style="position: absolute; top: 45px; left: 2px; right: 2px; height: 36px; border-radius: 6px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 3px 6px;"><div class="wf-data" style="font: 600 10px Manrope; color: #52525b;">Grace L.</div></div><div style="position: absolute; top: 162px; left: 2px; right: 2px; height: 27px; border-radius: 6px; background: #f4f4f5; border: 1px solid #d4d4d8; border-left: 3px solid #3f3f46; padding: 2px 6px;"><div class="wf-data" style="font: 600 9px Manrope; color: #52525b;">Jordan L.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 03 · APPOINTMENT DETAIL ============ -->
+  <section style="margin-top: 72px;">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px;">
+      <h2 style="font: 800 24px Manrope; margin: 0; letter-spacing: -0.01em;">03 · Appointment detail</h2>
+      <span style="font: 500 13px 'JetBrains Mono', monospace; color: #9a9aa2;">slide-over over the calendar — everything actionable in one panel</span>
+    </div>
+    <div style="width: 1040px; height: 480px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05); position: relative;">
+      <!-- dimmed calendar behind -->
+      <div style="position: absolute; inset: 0; padding: 26px; opacity: .35; filter: grayscale(1);">
+        <div style="font: 700 16px Manrope; margin-bottom: 16px;">Mon, Jun 15 · all staff</div>
+        <div style="display: flex; gap: 8px;">
+          <div style="flex: 1; height: 380px; border: 1px solid #ededef; border-radius: 8px;"></div>
+          <div style="flex: 1; height: 380px; border: 1px solid #ededef; border-radius: 8px;"></div>
+          <div style="flex: 1; height: 380px; border: 1px solid #ededef; border-radius: 8px;"></div>
+          <div style="flex: 1; height: 380px; border: 1px solid #ededef; border-radius: 8px;"></div>
+          <div style="flex: 1; height: 380px; border: 1px solid #ededef; border-radius: 8px;"></div>
+        </div>
+      </div>
+      <div style="position: absolute; inset: 0; background: rgba(40,40,46,.18);"></div>
+      <!-- slide-over -->
+      <div style="position: absolute; top: 0; right: 0; bottom: 0; width: 420px; background: #fff; border-left: 1px solid #d4d4d8; box-shadow: -8px 0 28px rgba(0,0,0,.08); padding: 24px 26px; display: flex; flex-direction: column; gap: 20px; overflow: hidden;">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;"><span style="width: 8px; height: 8px; border-radius: 2px; background: #3f3f46;"></span><span style="font: 600 11.5px 'JetBrains Mono', monospace; color: #52525b; text-transform: uppercase; letter-spacing: .08em;">Confirmed</span></div>
+            <div style="font: 800 22px Manrope; letter-spacing: -0.01em;">Elena Marsh</div>
+          </div>
+          <span style="width: 32px; height: 32px; border: 1px solid #d4d4d8; border-radius: 9px; display: flex; align-items: center; justify-content: center; color: #71717a; font-size: 16px;">×</span>
+        </div>
+        <!-- meta grid -->
+        <div class="wf-data" style="border: 1px solid #ededef; border-radius: 12px; overflow: hidden;">
+          <div style="display: flex; padding: 13px 15px; border-bottom: 1px solid #f0f0f2;"><span style="width: 92px; font: 500 12.5px Manrope; color: #a1a1aa;">Service</span><span style="font: 600 13.5px Manrope;">Balayage</span></div>
+          <div style="display: flex; padding: 13px 15px; border-bottom: 1px solid #f0f0f2;"><span style="width: 92px; font: 500 12.5px Manrope; color: #a1a1aa;">Staff</span><span style="font: 600 13.5px Manrope;">Priya Anand</span></div>
+          <div style="display: flex; padding: 13px 15px; border-bottom: 1px solid #f0f0f2;"><span style="width: 92px; font: 500 12.5px Manrope; color: #a1a1aa;">When</span><span style="font: 600 13.5px Manrope;">Mon, Jun 15 · 09:00–12:00</span></div>
+          <div style="display: flex; padding: 13px 15px; border-bottom: 1px solid #f0f0f2;"><span style="width: 92px; font: 500 12.5px Manrope; color: #a1a1aa;">Duration</span><span style="font: 600 13.5px Manrope;">180 min</span></div>
+          <div style="display: flex; padding: 13px 15px; align-items: center;"><span style="width: 92px; font: 500 12.5px Manrope; color: #a1a1aa;">Price</span><span style="font: 700 15px Manrope;">$180.00</span><span style="margin-left: auto; font: 600 11px Manrope; color: #71717a; border: 1px solid #d4d4d8; border-radius: 999px; padding: 3px 9px;">Unpaid</span></div>
+        </div>
+        <!-- status control -->
+        <div>
+          <div style="font: 600 12px Manrope; color: #52525b; margin-bottom: 8px;">Status</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <span style="font: 600 12px Manrope; padding: 6px 11px; border-radius: 8px; border: 1px solid #d4d4d8; color: #71717a;">Pending</span>
+            <span style="font: 600 12px Manrope; padding: 6px 11px; border-radius: 8px; background: #2a2a2e; color: #fff;">Confirmed</span>
+            <span style="font: 600 12px Manrope; padding: 6px 11px; border-radius: 8px; border: 1px solid #d4d4d8; color: #71717a;">Completed</span>
+            <span style="font: 600 12px Manrope; padding: 6px 11px; border-radius: 8px; border: 1px solid #d4d4d8; color: #71717a;">No-show</span>
+          </div>
+        </div>
+        <!-- notes -->
+        <div>
+          <div style="font: 600 12px Manrope; color: #52525b; margin-bottom: 8px;">Notes</div>
+          <div style="border: 1px solid #d4d4d8; border-radius: 10px; padding: 12px 13px; min-height: 64px; font: 500 12.5px/1.5 Manrope; color: #52525b;">Prefers cooler tones. Allergy: PPD — patch test done 04/12.</div>
+        </div>
+        <!-- footer -->
+        <div style="margin-top: auto; display: flex; flex-direction: column; gap: 9px;">
+          <div style="display: flex; gap: 9px;">
+            <div style="flex: 1; height: 40px; border: 1px solid #d4d4d8; border-radius: 10px; display: flex; align-items: center; justify-content: center; font: 600 13px Manrope; color: #3f3f46;">Reschedule</div>
+            <div style="flex: 1; height: 40px; border: 1px solid #d4d4d8; border-radius: 10px; display: flex; align-items: center; justify-content: center; font: 600 13px Manrope; color: #71717a;">Cancel</div>
+          </div>
+          <div style="height: 42px; border-radius: 10px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font: 600 13.5px Manrope;">Save changes</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 04 · CLIENTS ============ -->
+  <section style="margin-top: 72px;">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px;">
+      <h2 style="font: 800 24px Manrope; margin: 0; letter-spacing: -0.01em;">04 · Clients</h2>
+      <span style="font: 500 13px 'JetBrains Mono', monospace; color: #9a9aa2;">searchable list + profile: history, upcoming, total spend, notes</span>
+    </div>
+    <div style="width: 1180px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05); display: flex;">
+      <aside style="width: 60px; flex-shrink: 0; border-right: 1px solid #ededef; padding: 16px 0; display: flex; flex-direction: column; align-items: center; gap: 14px; background: #fbfbfc;">
+        <span style="width: 26px; height: 26px; border-radius: 8px; background: var(--accent); color: #fff; font: 800 13px Manrope; display: flex; align-items: center; justify-content: center;">L</span>
+        <span style="width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid #b4b4ba;"></span>
+        <span style="width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid #b4b4ba;"></span>
+        <span style="width: 20px; height: 20px; border-radius: 50%; background: #3f3f46;"></span>
+        <span style="width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid #b4b4ba;"></span>
+        <span style="width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #b4b4ba;"></span>
+      </aside>
+      <!-- list -->
+      <div style="width: 340px; flex-shrink: 0; border-right: 1px solid #ededef; display: flex; flex-direction: column;">
+        <div style="padding: 20px 20px 14px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;"><div style="font: 800 20px Manrope; letter-spacing: -0.01em;">Clients</div><span style="font: 500 12px 'JetBrains Mono', monospace; color: #a1a1aa;">312</span></div>
+          <div style="height: 38px; border: 1px solid #d4d4d8; border-radius: 9px; display: flex; align-items: center; gap: 9px; padding: 0 12px; color: #a1a1aa; font: 500 13px Manrope;"><span style="width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #c4c4c8;"></span>Search name, phone, email…</div>
+        </div>
+        <div style="flex: 1; overflow: hidden;">
+          <div style="display: flex; gap: 12px; align-items: center; padding: 13px 20px; background: #f0f0f2; border-left: 2px solid var(--accent);"><span style="width: 36px; height: 36px; border-radius: 50%; background: #e0e0e4;"></span><div style="flex: 1;"><div style="font: 600 13.5px Manrope;">Elena Marsh</div><div class="wf-data" style="font: 500 11.5px Manrope; color: #71717a;">Last visit Jun 15 · $1,240</div></div></div>
+          <div style="display: flex; gap: 12px; align-items: center; padding: 13px 20px; border-top: 1px solid #f0f0f2;"><span style="width: 36px; height: 36px; border-radius: 50%; background: #e4e4e7;"></span><div style="flex: 1;"><div style="font: 600 13.5px Manrope;">Bianca Rossi</div><div class="wf-data" style="font: 500 11.5px Manrope; color: #71717a;">Upcoming today · $880</div></div></div>
+          <div style="display: flex; gap: 12px; align-items: center; padding: 13px 20px; border-top: 1px solid #f0f0f2;"><span style="width: 36px; height: 36px; border-radius: 50%; background: #e4e4e7;"></span><div style="flex: 1;"><div style="font: 600 13.5px Manrope;">Grace Lin</div><div class="wf-data" style="font: 500 11.5px Manrope; color: #71717a;">Last visit Jun 02 · $610</div></div></div>
+          <div style="display: flex; gap: 12px; align-items: center; padding: 13px 20px; border-top: 1px solid #f0f0f2;"><span style="width: 36px; height: 36px; border-radius: 50%; background: #e4e4e7;"></span><div style="flex: 1;"><div style="font: 600 13.5px Manrope;">Jordan Lee</div><div class="wf-data" style="font: 500 11.5px Manrope; color: #71717a;">Last visit May 28 · $395</div></div></div>
+          <div style="display: flex; gap: 12px; align-items: center; padding: 13px 20px; border-top: 1px solid #f0f0f2;"><span style="width: 36px; height: 36px; border-radius: 50%; background: #e4e4e7;"></span><div style="flex: 1;"><div style="font: 600 13.5px Manrope;">Mei Tanaka</div><div class="wf-data" style="font: 500 11.5px Manrope; color: #71717a;">Last visit May 19 · $1,705</div></div></div>
+          <div style="display: flex; gap: 12px; align-items: center; padding: 13px 20px; border-top: 1px solid #f0f0f2;"><span style="width: 36px; height: 36px; border-radius: 50%; background: #e4e4e7;"></span><div style="flex: 1;"><div style="font: 600 13.5px Manrope;">Hassan Ali</div><div class="wf-data" style="font: 500 11.5px Manrope; color: #71717a;">Last visit Apr 30 · $220</div></div></div>
+        </div>
+      </div>
+      <!-- profile -->
+      <div style="flex: 1; padding: 26px 30px;">
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+          <span style="width: 60px; height: 60px; border-radius: 50%; background: #e0e0e4;"></span>
+          <div style="flex: 1;">
+            <div style="font: 800 24px Manrope; letter-spacing: -0.01em;">Elena Marsh</div>
+            <div class="wf-data" style="font: 500 13px Manrope; color: #71717a;">(415) 555-0148 · elena.marsh@email.com</div>
+          </div>
+          <div style="height: 38px; padding: 0 15px; border-radius: 9px; background: var(--accent); color: #fff; display: flex; align-items: center; gap: 7px; font: 600 13px Manrope;"><span style="font-size: 15px;">+</span>Book appointment</div>
+        </div>
+        <!-- stats -->
+        <div class="wf-data" style="display: flex; gap: 12px; margin-bottom: 24px;">
+          <div style="flex: 1; border: 1px solid #ededef; border-radius: 12px; padding: 14px 16px;"><div style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase; letter-spacing: .06em;">Total spend</div><div style="font: 700 22px Manrope; margin-top: 4px;">$1,240</div></div>
+          <div style="flex: 1; border: 1px solid #ededef; border-radius: 12px; padding: 14px 16px;"><div style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase; letter-spacing: .06em;">Visits</div><div style="font: 700 22px Manrope; margin-top: 4px;">11</div></div>
+          <div style="flex: 1; border: 1px solid #ededef; border-radius: 12px; padding: 14px 16px;"><div style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase; letter-spacing: .06em;">No-shows</div><div style="font: 700 22px Manrope; margin-top: 4px;">0</div></div>
+        </div>
+        <!-- upcoming -->
+        <div style="font: 700 13px Manrope; margin-bottom: 10px;">Upcoming</div>
+        <div style="border: 1px solid #ededef; border-radius: 12px; padding: 13px 16px; display: flex; align-items: center; gap: 12px; margin-bottom: 22px;"><div style="width: 3px; align-self: stretch; border-radius: 3px; background: #3f3f46;"></div><div class="wf-data" style="font: 700 14px Manrope; color: var(--accent);">Jun 15 · 09:00</div><div style="flex: 1;"><div style="font: 600 13.5px Manrope;">Balayage</div><div style="font: 500 12px Manrope; color: #71717a;">Priya Anand · 180 min</div></div><span style="font: 700 14px Manrope;">$180</span></div>
+        <!-- history -->
+        <div style="font: 700 13px Manrope; margin-bottom: 10px;">History</div>
+        <div class="wf-data" style="display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid #f0f0f2;"><span style="font: 600 12.5px Manrope; color: #52525b; width: 86px;">May 18</span><span style="flex: 1; font: 500 13px Manrope;">Gloss / Toner · Priya Anand</span><span style="font: 600 13px Manrope; color: #52525b;">$55</span></div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid #f0f0f2;"><span style="font: 600 12.5px Manrope; color: #52525b; width: 86px;">Apr 06</span><span style="flex: 1; font: 500 13px Manrope;">Full Color · Priya Anand</span><span style="font: 600 13px Manrope; color: #52525b;">$120</span></div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid #f0f0f2; border-bottom: 1px solid #f0f0f2;"><span style="font: 600 12.5px Manrope; color: #52525b; width: 86px;">Mar 02</span><span style="flex: 1; font: 500 13px Manrope;">Women’s Cut · Sasha Romano</span><span style="font: 600 13px Manrope; color: #52525b;">$65</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 05 · SERVICES & STAFF ============ -->
+  <section style="margin-top: 72px;">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px;">
+      <h2 style="font: 800 24px Manrope; margin: 0; letter-spacing: -0.01em;">05 · Services &amp; Staff</h2>
+      <span style="font: 500 13px 'JetBrains Mono', monospace; color: #9a9aa2;">the catalog and the team — who can perform what</span>
+    </div>
+    <div style="display: flex; gap: 44px; align-items: flex-start;">
+
+      <!-- SERVICES -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">Services catalog</div>
+        <div style="width: 620px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05);">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #ededef;"><div style="font: 800 20px Manrope; letter-spacing: -0.01em;">Services</div><div style="height: 36px; padding: 0 14px; border-radius: 9px; background: var(--accent); color: #fff; display: flex; align-items: center; gap: 7px; font: 600 13px Manrope;"><span style="font-size: 15px;">+</span>Add service</div></div>
+          <!-- column header -->
+          <div style="display: flex; padding: 10px 24px; border-bottom: 1px solid #ededef; font: 600 11px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase; letter-spacing: .06em;"><span style="flex: 1;">Service</span><span style="width: 78px; text-align: right;">Duration</span><span style="width: 70px; text-align: right;">Price</span><span style="width: 86px; text-align: right;">Staff</span></div>
+          <!-- category Hair -->
+          <div class="wf-data" style="padding: 0 24px;">
+            <div style="font: 700 11px 'JetBrains Mono', monospace; color: #71717a; padding: 12px 0 6px; text-transform: uppercase; letter-spacing: .06em;">Hair</div>
+            <div style="display: flex; align-items: center; padding: 11px 0; border-top: 1px solid #f0f0f2;"><span style="flex: 1; font: 600 13.5px Manrope;">Women’s Cut</span><span style="width: 78px; text-align: right; font: 600 13px Manrope; color: #52525b;">45 min</span><span style="width: 70px; text-align: right; font: 700 13.5px Manrope;">$65</span><span style="width: 86px; display: flex; justify-content: flex-end;"><span style="display: flex;"><span style="width: 22px; height: 22px; border-radius: 50%; background: #e0e0e4; border: 2px solid #fff;"></span><span style="width: 22px; height: 22px; border-radius: 50%; background: #d8d8dc; border: 2px solid #fff; margin-left: -8px;"></span></span></span></div>
+            <div style="display: flex; align-items: center; padding: 11px 0; border-top: 1px solid #f0f0f2;"><span style="flex: 1; font: 600 13.5px Manrope;">Men’s Cut</span><span style="width: 78px; text-align: right; font: 600 13px Manrope; color: #52525b;">30 min</span><span style="width: 70px; text-align: right; font: 700 13.5px Manrope;">$40</span><span style="width: 86px; display: flex; justify-content: flex-end;"><span style="display: flex;"><span style="width: 22px; height: 22px; border-radius: 50%; background: #e0e0e4; border: 2px solid #fff;"></span><span style="width: 22px; height: 22px; border-radius: 50%; background: #d8d8dc; border: 2px solid #fff; margin-left: -8px;"></span></span></span></div>
+            <div style="display: flex; align-items: center; padding: 11px 0; border-top: 1px solid #f0f0f2;"><span style="flex: 1; font: 600 13.5px Manrope;">Keratin Treatment</span><span style="width: 78px; text-align: right; font: 600 13px Manrope; color: #52525b;">90 min</span><span style="width: 70px; text-align: right; font: 700 13.5px Manrope;">$160</span><span style="width: 86px; display: flex; justify-content: flex-end;"><span style="width: 22px; height: 22px; border-radius: 50%; background: #e0e0e4;"></span></span></div>
+          </div>
+          <!-- category Color -->
+          <div class="wf-data" style="padding: 0 24px;">
+            <div style="font: 700 11px 'JetBrains Mono', monospace; color: #71717a; padding: 12px 0 6px; text-transform: uppercase; letter-spacing: .06em;">Color</div>
+            <div style="display: flex; align-items: center; padding: 11px 0; border-top: 1px solid #f0f0f2;"><span style="flex: 1; font: 600 13.5px Manrope;">Full Color</span><span style="width: 78px; text-align: right; font: 600 13px Manrope; color: #52525b;">120 min</span><span style="width: 70px; text-align: right; font: 700 13.5px Manrope;">$120</span><span style="width: 86px; display: flex; justify-content: flex-end;"><span style="width: 22px; height: 22px; border-radius: 50%; background: #e0e0e4;"></span></span></div>
+            <div style="display: flex; align-items: center; padding: 11px 0; border-top: 1px solid #f0f0f2;"><span style="flex: 1; font: 600 13.5px Manrope;">Balayage</span><span style="width: 78px; text-align: right; font: 600 13px Manrope; color: #52525b;">180 min</span><span style="width: 70px; text-align: right; font: 700 13.5px Manrope;">$180</span><span style="width: 86px; display: flex; justify-content: flex-end;"><span style="width: 22px; height: 22px; border-radius: 50%; background: #e0e0e4;"></span></span></div>
+            <div style="display: flex; align-items: center; padding: 11px 0; border-top: 1px solid #f0f0f2;"><span style="flex: 1; font: 600 13.5px Manrope;">Gloss / Toner</span><span style="width: 78px; text-align: right; font: 600 13px Manrope; color: #52525b;">45 min</span><span style="width: 70px; text-align: right; font: 700 13.5px Manrope;">$55</span><span style="width: 86px; display: flex; justify-content: flex-end;"><span style="width: 22px; height: 22px; border-radius: 50%; background: #e0e0e4;"></span></span></div>
+          </div>
+          <!-- category Skin -->
+          <div class="wf-data" style="padding: 0 24px 18px;">
+            <div style="font: 700 11px 'JetBrains Mono', monospace; color: #71717a; padding: 12px 0 6px; text-transform: uppercase; letter-spacing: .06em;">Skin</div>
+            <div style="display: flex; align-items: center; padding: 11px 0; border-top: 1px solid #f0f0f2;"><span style="flex: 1; font: 600 13.5px Manrope;">Signature Facial</span><span style="width: 78px; text-align: right; font: 600 13px Manrope; color: #52525b;">60 min</span><span style="width: 70px; text-align: right; font: 700 13.5px Manrope;">$95</span><span style="width: 86px; display: flex; justify-content: flex-end;"><span style="width: 22px; height: 22px; border-radius: 50%; background: #e0e0e4;"></span></span></div>
+            <div style="display: flex; align-items: center; padding: 11px 0; border-top: 1px solid #f0f0f2; border-bottom: 1px solid #f0f0f2;"><span style="flex: 1; font: 600 13.5px Manrope;">Deep-Cleanse Facial</span><span style="width: 78px; text-align: right; font: 600 13px Manrope; color: #52525b;">75 min</span><span style="width: 70px; text-align: right; font: 700 13.5px Manrope;">$110</span><span style="width: 86px; display: flex; justify-content: flex-end;"><span style="width: 22px; height: 22px; border-radius: 50%; background: #e0e0e4;"></span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAFF -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">Team &amp; availability</div>
+        <div style="width: 560px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05);">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #ededef;"><div style="font: 800 20px Manrope; letter-spacing: -0.01em;">Staff</div><div style="height: 36px; padding: 0 14px; border-radius: 9px; background: var(--accent); color: #fff; display: flex; align-items: center; gap: 7px; font: 600 13px Manrope;"><span style="font-size: 15px;">+</span>Add member</div></div>
+          <div style="padding: 8px 24px 20px;">
+            <!-- staff card -->
+            <div style="display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid #f0f0f2;"><span style="width: 44px; height: 44px; border-radius: 50%; background: #e0e0e4; flex-shrink: 0;"></span><div style="flex: 1;"><div style="display: flex; align-items: center; justify-content: space-between;"><div style="font: 700 15px Manrope;">Maya Chen</div><span style="font: 600 11px 'JetBrains Mono', monospace; color: #71717a; border: 1px solid #d4d4d8; border-radius: 999px; padding: 3px 9px;">Owner · Stylist</span></div><div class="wf-data" style="font: 500 12px Manrope; color: #71717a; margin: 6px 0 9px;">Mon–Fri · 09:00–17:00</div><div style="display: flex; gap: 6px; flex-wrap: wrap;"><span style="font: 600 11px Manrope; color: #52525b; background: #f0f0f2; border-radius: 6px; padding: 3px 8px;">Cuts</span><span style="font: 600 11px Manrope; color: #52525b; background: #f0f0f2; border-radius: 6px; padding: 3px 8px;">Keratin</span></div></div></div>
+            <div style="display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid #f0f0f2;"><span style="width: 44px; height: 44px; border-radius: 50%; background: #e4e4e7; flex-shrink: 0;"></span><div style="flex: 1;"><div style="display: flex; align-items: center; justify-content: space-between;"><div style="font: 700 15px Manrope;">Priya Anand</div><span style="font: 600 11px 'JetBrains Mono', monospace; color: #71717a; border: 1px solid #d4d4d8; border-radius: 999px; padding: 3px 9px;">Colorist</span></div><div class="wf-data" style="font: 500 12px Manrope; color: #71717a; margin: 6px 0 9px;">Tue–Sat · 10:00–18:00</div><div style="display: flex; gap: 6px; flex-wrap: wrap;"><span style="font: 600 11px Manrope; color: #52525b; background: #f0f0f2; border-radius: 6px; padding: 3px 8px;">Full Color</span><span style="font: 600 11px Manrope; color: #52525b; background: #f0f0f2; border-radius: 6px; padding: 3px 8px;">Balayage</span><span style="font: 600 11px Manrope; color: #52525b; background: #f0f0f2; border-radius: 6px; padding: 3px 8px;">Gloss</span></div></div></div>
+            <div style="display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid #f0f0f2;"><span style="width: 44px; height: 44px; border-radius: 50%; background: #e4e4e7; flex-shrink: 0;"></span><div style="flex: 1;"><div style="display: flex; align-items: center; justify-content: space-between;"><div style="font: 700 15px Manrope;">Devin Brooks</div><span style="font: 600 11px 'JetBrains Mono', monospace; color: #71717a; border: 1px solid #d4d4d8; border-radius: 999px; padding: 3px 9px;">Stylist</span></div><div class="wf-data" style="font: 500 12px Manrope; color: #71717a; margin: 6px 0 9px;">Wed–Sun · 09:00–17:00</div><div style="display: flex; gap: 6px; flex-wrap: wrap;"><span style="font: 600 11px Manrope; color: #52525b; background: #f0f0f2; border-radius: 6px; padding: 3px 8px;">Cuts</span></div></div></div>
+            <div style="display: flex; gap: 14px; padding: 16px 0;"><span style="width: 44px; height: 44px; border-radius: 50%; background: #e4e4e7; flex-shrink: 0;"></span><div style="flex: 1;"><div style="display: flex; align-items: center; justify-content: space-between;"><div style="font: 700 15px Manrope;">Noor Haddad</div><span style="font: 600 11px 'JetBrains Mono', monospace; color: #71717a; border: 1px solid #d4d4d8; border-radius: 999px; padding: 3px 9px;">Esthetician</span></div><div class="wf-data" style="font: 500 12px Manrope; color: #71717a; margin: 6px 0 9px;">Mon–Thu · 10:00–18:00</div><div style="display: flex; gap: 6px; flex-wrap: wrap;"><span style="font: 600 11px Manrope; color: #52525b; background: #f0f0f2; border-radius: 6px; padding: 3px 8px;">Signature Facial</span><span style="font: 600 11px Manrope; color: #52525b; background: #f0f0f2; border-radius: 6px; padding: 3px 8px;">Deep-Cleanse</span></div></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 06 · SETTINGS → BRANDING ============ -->
+  <section style="margin-top: 72px;">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px;">
+      <h2 style="font: 800 24px Manrope; margin: 0; letter-spacing: -0.01em;">06 · Settings → Branding</h2>
+      <span style="font: 500 13px 'JetBrains Mono', monospace; color: #9a9aa2;">the white-label control panel — the <span style="color: #71717a;">--brand</span> token, made tangible &amp; live</span>
+    </div>
+    <div style="width: 1180px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05); display: flex;">
+      <aside style="width: 60px; flex-shrink: 0; border-right: 1px solid #ededef; padding: 16px 0; display: flex; flex-direction: column; align-items: center; gap: 14px; background: #fbfbfc;">
+        <span style="width: 26px; height: 26px; border-radius: 8px; background: var(--accent); color: #fff; font: 800 13px Manrope; display: flex; align-items: center; justify-content: center;">L</span>
+        <span style="width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid #b4b4ba;"></span>
+        <span style="width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid #b4b4ba;"></span>
+        <span style="width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #b4b4ba;"></span>
+        <span style="width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid #b4b4ba;"></span>
+        <span style="margin-top: auto; width: 20px; height: 20px; border-radius: 5px; background: #3f3f46;"></span>
+      </aside>
+      <!-- settings subnav -->
+      <div style="width: 200px; flex-shrink: 0; border-right: 1px solid #ededef; padding: 24px 16px; background: #fbfbfc;">
+        <div style="font: 800 18px Manrope; letter-spacing: -0.01em; padding: 0 8px 16px;">Settings</div>
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <div style="padding: 8px 10px; border-radius: 8px; font: 600 13px Manrope; color: #71717a;">Business profile</div>
+          <div style="padding: 8px 10px; border-radius: 8px; font: 600 13px Manrope; background: #f0f0f2; color: #2a2a2e;">Branding</div>
+          <div style="padding: 8px 10px; border-radius: 8px; font: 600 13px Manrope; color: #71717a;">Business hours</div>
+          <div style="padding: 8px 10px; border-radius: 8px; font: 600 13px Manrope; color: #71717a;">Notifications</div>
+          <div style="padding: 8px 10px; border-radius: 8px; font: 600 13px Manrope; color: #71717a;">Payments</div>
+        </div>
+      </div>
+      <!-- branding form -->
+      <div style="flex: 1; padding: 30px 34px; display: flex; gap: 40px;">
+        <!-- left: controls -->
+        <div style="flex: 1; max-width: 440px;">
+          <div style="font: 800 22px Manrope; letter-spacing: -0.01em; margin-bottom: 4px;">Branding</div>
+          <div style="font: 500 13.5px/1.5 Manrope; color: #71717a; margin-bottom: 28px;">Your brand color and logo apply across the operator app and your public booking site.</div>
+
+          <!-- logo -->
+          <div style="font: 600 12.5px Manrope; color: #3f3f46; margin-bottom: 8px;">Logo</div>
+          <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 26px;">
+            <div style="width: 64px; height: 64px; border-radius: 14px; background: var(--accent); color: #fff; font: 800 26px Manrope; display: flex; align-items: center; justify-content: center;">L</div>
+            <div style="flex: 1; height: 64px; border: 1.5px dashed #c4c4c8; border-radius: 12px; display: flex; align-items: center; justify-content: center; font: 500 12.5px Manrope; color: #a1a1aa; gap: 7px;"><span style="width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid #c4c4c8;"></span>Drop a PNG or SVG, or browse</div>
+          </div>
+
+          <!-- brand color -->
+          <div style="font: 600 12.5px Manrope; color: #3f3f46; margin-bottom: 4px;">Brand color <span style="font: 500 11px 'JetBrains Mono', monospace; color: #a1a1aa;">--brand</span></div>
+          <div style="font: 500 12px/1.5 Manrope; color: #a1a1aa; margin-bottom: 12px;">One token. Layout, type and spacing stay identical — only this changes.</div>
+          <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 14px;">
+            <div style="width: 46px; height: 46px; border-radius: 11px; background: var(--accent); box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--accent);"></div>
+            <div class="wf-data" style="height: 46px; flex: 1; border: 1px solid #d4d4d8; border-radius: 10px; display: flex; align-items: center; padding: 0 14px; font: 600 14px 'JetBrains Mono', monospace; color: #3f3f46;">#5B5B66 <span style="margin-left: auto; font: 500 11px Manrope; color: #a1a1aa;">edit in Tweaks →</span></div>
+          </div>
+          <div style="display: flex; gap: 10px; margin-bottom: 28px;">
+            <span style="width: 30px; height: 30px; border-radius: 8px; background: #6d4760;" title="plum"></span>
+            <span style="width: 30px; height: 30px; border-radius: 8px; background: #9a5b43;" title="terracotta"></span>
+            <span style="width: 30px; height: 30px; border-radius: 8px; background: #4a6350;" title="forest"></span>
+            <span style="width: 30px; height: 30px; border-radius: 8px; background: #9a7434;" title="amber"></span>
+            <span style="width: 30px; height: 30px; border-radius: 8px; background: #356b73;" title="teal-petrol"></span>
+            <span style="width: 30px; height: 30px; border-radius: 8px; border: 1.5px dashed #c4c4c8; display: flex; align-items: center; justify-content: center; color: #a1a1aa; font-size: 15px;">+</span>
+          </div>
+
+          <!-- domain -->
+          <div style="font: 600 12.5px Manrope; color: #3f3f46; margin-bottom: 8px;">Custom domain</div>
+          <div class="wf-data" style="height: 44px; border: 1px solid #d4d4d8; border-radius: 10px; display: flex; align-items: center; padding: 0 14px; font: 500 13.5px Manrope; color: #3f3f46; margin-bottom: 6px;">book.lumenstudio.com</div>
+          <div style="display: flex; align-items: center; gap: 7px; font: 500 12px Manrope; color: #71717a; margin-bottom: 28px;"><span style="width: 14px; height: 14px; border-radius: 50%; background: #d4d4d8; display: flex; align-items: center; justify-content: center; font: 700 8px Manrope; color: #52525b;">✓</span>Connected · SSL active</div>
+
+          <div style="display: flex; gap: 10px;">
+            <div style="height: 42px; padding: 0 20px; border-radius: 10px; background: var(--accent); color: #fff; display: flex; align-items: center; font: 600 13.5px Manrope;">Save changes</div>
+            <div style="height: 42px; padding: 0 20px; border: 1px solid #d4d4d8; border-radius: 10px; display: flex; align-items: center; font: 600 13.5px Manrope; color: #71717a;">Cancel</div>
+          </div>
+        </div>
+
+        <!-- right: live preview -->
+        <div style="width: 340px; flex-shrink: 0;">
+          <div style="font: 600 11px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px;">Live preview</div>
+          <!-- mini operator -->
+          <div style="border: 1px solid #e4e4e7; border-radius: 12px; overflow: hidden; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 11px 14px; border-bottom: 1px solid #f0f0f2;"><span style="width: 18px; height: 18px; border-radius: 5px; background: var(--accent); color: #fff; font: 800 9px Manrope; display: flex; align-items: center; justify-content: center;">L</span><span style="font: 700 12px Manrope;">Lumen</span><span style="margin-left: auto; height: 24px; padding: 0 10px; border-radius: 7px; background: var(--accent); color: #fff; font: 600 10px Manrope; display: flex; align-items: center;">+ New</span></div>
+            <div style="padding: 13px 14px;"><div class="wf-data" style="display: flex; align-items: center; gap: 7px; margin-bottom: 8px;"><span style="font: 700 9px 'JetBrains Mono', monospace; color: var(--accent);">11:24</span><span class="now-dot" style="width: 6px; height: 6px; border-radius: 50%; background: var(--accent);"></span><span style="flex: 1; height: 2px; background: var(--accent); border-radius: 2px;"></span></div><div style="height: 30px; border-radius: 6px; background: #f4f4f5; border-left: 3px solid #3f3f46; display: flex; align-items: center; padding: 0 8px; font: 600 10.5px Manrope; color: #52525b;">12:00 · Bianca R.</div></div>
+          </div>
+          <!-- mini booking -->
+          <div style="border: 1px solid #e4e4e7; border-radius: 12px; overflow: hidden;">
+            <div style="padding: 12px 14px; border-bottom: 1px solid #f0f0f2; font: 700 12px Manrope;">Public booking</div>
+            <div style="padding: 13px 14px; display: flex; flex-direction: column; gap: 7px;">
+              <div class="wf-data" style="display: flex; gap: 6px;"><span style="flex: 1; height: 28px; border: 1px solid #e4e4e7; border-radius: 7px; display: flex; align-items: center; justify-content: center; font: 600 10.5px Manrope; color: #71717a;">10:30</span><span style="flex: 1; height: 28px; border-radius: 7px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font: 600 10.5px Manrope;">11:00</span><span style="flex: 1; height: 28px; border: 1px solid #e4e4e7; border-radius: 7px; display: flex; align-items: center; justify-content: center; font: 600 10.5px Manrope; color: #71717a;">11:30</span></div>
+              <div style="height: 32px; border-radius: 8px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font: 600 11.5px Manrope;">Confirm booking</div>
+            </div>
+          </div>
+          <div style="font: 500 11.5px/1.5 Manrope; color: #a1a1aa; margin-top: 12px; text-wrap: pretty;">Swap the token to any hue — the two surfaces recolor together, nothing else moves.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 07 · PUBLIC BOOKING (mobile) ============ -->
+  <section style="margin-top: 80px;">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 4px;">
+      <h2 style="font: 800 24px Manrope; margin: 0; letter-spacing: -0.01em;">07 · Public booking site</h2>
+      <span style="font: 500 13px 'JetBrains Mono', monospace; color: #9a9aa2;">phone-first · branded per tenant · fast path to booked</span>
+    </div>
+    <div style="font: 500 13px 'JetBrains Mono', monospace; color: #9a9aa2; margin-bottom: 26px;">service → staff → date &amp; time → details → confirm</div>
+
+    <!-- linear steps -->
+    <div style="display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap;">
+
+      <!-- STEP 1: service -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">1 · Choose service</div>
+        <div style="width: 360px; height: 740px; background: #fff; border: 1px solid #cfcfd4; border-radius: 34px; box-shadow: 0 6px 22px rgba(0,0,0,.07); overflow: hidden; display: flex; flex-direction: column;">
+          <div class="wf-data" style="height: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font: 700 13px Manrope;"><span>9:41</span><span style="width: 18px; height: 10px; border: 1.5px solid #2a2a2e; border-radius: 2px;"></span></div>
+          <div style="padding: 14px 22px; border-bottom: 1px solid #f0f0f2; display: flex; align-items: center; gap: 9px;"><span style="width: 24px; height: 24px; border-radius: 7px; background: var(--accent); color: #fff; font: 800 12px Manrope; display: flex; align-items: center; justify-content: center;">L</span><span style="font: 700 14px Manrope;">Lumen Studio</span><span style="margin-left: auto; font: 600 11px 'JetBrains Mono', monospace; color: #a1a1aa;">1 / 4</span></div>
+          <div style="height: 3px; background: #ededef;"><div style="width: 25%; height: 100%; background: var(--accent);"></div></div>
+          <div style="padding: 22px 22px 0;">
+            <div style="font: 800 22px Manrope; letter-spacing: -0.01em; margin-bottom: 4px;">What can we do for you?</div>
+            <div style="font: 500 13px Manrope; color: #71717a; margin-bottom: 18px;">Pick a service to get started.</div>
+            <div style="display: flex; gap: 7px; margin-bottom: 16px;"><span style="font: 600 12px Manrope; padding: 6px 13px; border-radius: 999px; background: #2a2a2e; color: #fff;">All</span><span style="font: 600 12px Manrope; padding: 6px 13px; border-radius: 999px; border: 1px solid #d4d4d8; color: #71717a;">Hair</span><span style="font: 600 12px Manrope; padding: 6px 13px; border-radius: 999px; border: 1px solid #d4d4d8; color: #71717a;">Color</span><span style="font: 600 12px Manrope; padding: 6px 13px; border-radius: 999px; border: 1px solid #d4d4d8; color: #71717a;">Skin</span></div>
+          </div>
+          <div style="flex: 1; overflow: hidden; padding: 0 22px;">
+            <div class="wf-data" style="display: flex; align-items: center; gap: 12px; padding: 15px 16px; border: 1.5px solid var(--accent); border-radius: 14px; margin-bottom: 10px;"><div style="flex: 1;"><div style="font: 700 14.5px Manrope;">Balayage</div><div style="font: 500 12px Manrope; color: #71717a;">180 min</div></div><div style="text-align: right;"><div style="font: 700 15px Manrope;">$180</div></div><span style="width: 20px; height: 20px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: #fff; font: 700 11px Manrope;">✓</span></div>
+            <div class="wf-data" style="display: flex; align-items: center; gap: 12px; padding: 15px 16px; border: 1px solid #e4e4e7; border-radius: 14px; margin-bottom: 10px;"><div style="flex: 1;"><div style="font: 700 14.5px Manrope;">Women’s Cut</div><div style="font: 500 12px Manrope; color: #71717a;">45 min</div></div><div style="font: 700 15px Manrope;">$65</div></div>
+            <div class="wf-data" style="display: flex; align-items: center; gap: 12px; padding: 15px 16px; border: 1px solid #e4e4e7; border-radius: 14px; margin-bottom: 10px;"><div style="flex: 1;"><div style="font: 700 14.5px Manrope;">Full Color</div><div style="font: 500 12px Manrope; color: #71717a;">120 min</div></div><div style="font: 700 15px Manrope;">$120</div></div>
+            <div class="wf-data" style="display: flex; align-items: center; gap: 12px; padding: 15px 16px; border: 1px solid #e4e4e7; border-radius: 14px;"><div style="flex: 1;"><div style="font: 700 14.5px Manrope;">Signature Facial</div><div style="font: 500 12px Manrope; color: #71717a;">60 min</div></div><div style="font: 700 15px Manrope;">$95</div></div>
+          </div>
+          <div style="padding: 16px 22px 24px; border-top: 1px solid #f0f0f2;"><div style="height: 50px; border-radius: 13px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font: 700 15px Manrope;">Continue</div></div>
+        </div>
+      </div>
+
+      <!-- STEP 2: staff -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">2 · Choose staff</div>
+        <div style="width: 360px; height: 740px; background: #fff; border: 1px solid #cfcfd4; border-radius: 34px; box-shadow: 0 6px 22px rgba(0,0,0,.07); overflow: hidden; display: flex; flex-direction: column;">
+          <div class="wf-data" style="height: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font: 700 13px Manrope;"><span>9:41</span><span style="width: 18px; height: 10px; border: 1.5px solid #2a2a2e; border-radius: 2px;"></span></div>
+          <div style="padding: 14px 22px; border-bottom: 1px solid #f0f0f2; display: flex; align-items: center; gap: 9px;"><span style="font-size: 17px; color: #71717a;">‹</span><span style="width: 24px; height: 24px; border-radius: 7px; background: var(--accent); color: #fff; font: 800 12px Manrope; display: flex; align-items: center; justify-content: center;">L</span><span style="font: 700 14px Manrope;">Lumen Studio</span><span style="margin-left: auto; font: 600 11px 'JetBrains Mono', monospace; color: #a1a1aa;">2 / 4</span></div>
+          <div style="height: 3px; background: #ededef;"><div style="width: 50%; height: 100%; background: var(--accent);"></div></div>
+          <div style="padding: 22px 22px 0;">
+            <div style="font: 800 22px Manrope; letter-spacing: -0.01em; margin-bottom: 4px;">Who would you like?</div>
+            <div style="font: 500 13px Manrope; color: #71717a; margin-bottom: 18px;">Balayage · 180 min</div>
+          </div>
+          <div style="flex: 1; overflow: hidden; padding: 0 22px;">
+            <div style="display: flex; align-items: center; gap: 13px; padding: 15px 16px; border: 1.5px solid var(--accent); border-radius: 14px; margin-bottom: 10px;"><span style="width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font: 700 13px Manrope;">★</span><div style="flex: 1;"><div style="font: 700 14.5px Manrope;">No preference</div><div style="font: 500 12px Manrope; color: #71717a;">First available · soonest slots</div></div></div>
+            <div style="display: flex; align-items: center; gap: 13px; padding: 15px 16px; border: 1px solid #e4e4e7; border-radius: 14px; margin-bottom: 10px;"><span style="width: 40px; height: 40px; border-radius: 50%; background: #e0e0e4;"></span><div style="flex: 1;"><div style="font: 700 14.5px Manrope;">Priya Anand</div><div style="font: 500 12px Manrope; color: #71717a;">Colorist · next today</div></div></div>
+            <div style="display: flex; align-items: center; gap: 13px; padding: 15px 16px; border: 1px solid #e4e4e7; border-radius: 14px; margin-bottom: 10px;"><span style="width: 40px; height: 40px; border-radius: 50%; background: #e4e4e7;"></span><div style="flex: 1;"><div style="font: 700 14.5px Manrope;">Maya Chen</div><div style="font: 500 12px Manrope; color: #71717a;">Stylist · next Wed</div></div></div>
+            <div style="display: flex; align-items: center; gap: 13px; padding: 15px 16px; border: 1px solid #e4e4e7; border-radius: 14px;"><span style="width: 40px; height: 40px; border-radius: 50%; background: #e4e4e7;"></span><div style="flex: 1;"><div style="font: 700 14.5px Manrope;">Sasha Romano</div><div style="font: 500 12px Manrope; color: #71717a;">Stylist · next Thu</div></div></div>
+          </div>
+          <div style="padding: 16px 22px 24px; border-top: 1px solid #f0f0f2;"><div style="height: 50px; border-radius: 13px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font: 700 15px Manrope;">Continue</div></div>
+        </div>
+      </div>
+
+      <!-- STEP 4: details -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">4 · Your details</div>
+        <div style="width: 360px; height: 740px; background: #fff; border: 1px solid #cfcfd4; border-radius: 34px; box-shadow: 0 6px 22px rgba(0,0,0,.07); overflow: hidden; display: flex; flex-direction: column;">
+          <div class="wf-data" style="height: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font: 700 13px Manrope;"><span>9:41</span><span style="width: 18px; height: 10px; border: 1.5px solid #2a2a2e; border-radius: 2px;"></span></div>
+          <div style="padding: 14px 22px; border-bottom: 1px solid #f0f0f2; display: flex; align-items: center; gap: 9px;"><span style="font-size: 17px; color: #71717a;">‹</span><span style="width: 24px; height: 24px; border-radius: 7px; background: var(--accent); color: #fff; font: 800 12px Manrope; display: flex; align-items: center; justify-content: center;">L</span><span style="font: 700 14px Manrope;">Lumen Studio</span><span style="margin-left: auto; font: 600 11px 'JetBrains Mono', monospace; color: #a1a1aa;">4 / 4</span></div>
+          <div style="height: 3px; background: #ededef;"><div style="width: 100%; height: 100%; background: var(--accent);"></div></div>
+          <div style="padding: 22px;">
+            <div style="font: 800 22px Manrope; letter-spacing: -0.01em; margin-bottom: 18px;">Almost done</div>
+            <!-- summary chip -->
+            <div class="wf-data" style="display: flex; gap: 11px; align-items: center; padding: 12px 14px; background: #f7f7f8; border-radius: 12px; margin-bottom: 22px;"><span style="width: 3px; align-self: stretch; border-radius: 3px; background: var(--accent);"></span><div style="flex: 1;"><div style="font: 700 13px Manrope;">Balayage · Priya Anand</div><div style="font: 500 12px Manrope; color: #71717a;">Thu, Jun 18 · 10:30 · $180</div></div><span style="font: 600 11.5px Manrope; color: var(--accent);">Edit</span></div>
+            <div style="font: 600 12px Manrope; color: #3f3f46; margin-bottom: 7px;">Full name</div>
+            <div style="height: 46px; border: 1px solid #d4d4d8; border-radius: 11px; display: flex; align-items: center; padding: 0 14px; font: 500 13.5px Manrope; color: #a1a1aa; margin-bottom: 15px;">Your name</div>
+            <div style="font: 600 12px Manrope; color: #3f3f46; margin-bottom: 7px;">Mobile number</div>
+            <div class="wf-data" style="height: 46px; border: 1.5px solid var(--accent); border-radius: 11px; display: flex; align-items: center; padding: 0 14px; font: 600 13.5px Manrope; color: #2a2a2e; margin-bottom: 15px;">(415) 555-0148<span style="width: 1.5px; height: 18px; background: var(--accent); margin-left: 2px;"></span></div>
+            <div style="font: 600 12px Manrope; color: #3f3f46; margin-bottom: 7px;">Email <span style="font-weight: 500; color: #a1a1aa;">· for confirmation</span></div>
+            <div style="height: 46px; border: 1px solid #d4d4d8; border-radius: 11px; display: flex; align-items: center; padding: 0 14px; font: 500 13.5px Manrope; color: #a1a1aa; margin-bottom: 15px;">you@email.com</div>
+            <div style="font: 600 12px Manrope; color: #3f3f46; margin-bottom: 7px;">Notes <span style="font-weight: 500; color: #a1a1aa;">· optional</span></div>
+            <div style="min-height: 56px; border: 1px solid #d4d4d8; border-radius: 11px; padding: 11px 14px; font: 500 13px Manrope; color: #a1a1aa;">Anything we should know?</div>
+          </div>
+          <div style="margin-top: auto; padding: 16px 22px 24px; border-top: 1px solid #f0f0f2;"><div style="height: 50px; border-radius: 13px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font: 700 15px Manrope;">Review booking</div></div>
+        </div>
+      </div>
+
+      <!-- STEP 5: confirm review -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">5 · Review &amp; confirm</div>
+        <div style="width: 360px; height: 740px; background: #fff; border: 1px solid #cfcfd4; border-radius: 34px; box-shadow: 0 6px 22px rgba(0,0,0,.07); overflow: hidden; display: flex; flex-direction: column;">
+          <div class="wf-data" style="height: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font: 700 13px Manrope;"><span>9:41</span><span style="width: 18px; height: 10px; border: 1.5px solid #2a2a2e; border-radius: 2px;"></span></div>
+          <div style="padding: 14px 22px; border-bottom: 1px solid #f0f0f2; display: flex; align-items: center; gap: 9px;"><span style="font-size: 17px; color: #71717a;">‹</span><span style="width: 24px; height: 24px; border-radius: 7px; background: var(--accent); color: #fff; font: 800 12px Manrope; display: flex; align-items: center; justify-content: center;">L</span><span style="font: 700 14px Manrope;">Lumen Studio</span></div>
+          <div style="padding: 24px 22px 0;">
+            <div style="font: 800 22px Manrope; letter-spacing: -0.01em; margin-bottom: 20px;">Looks good?</div>
+            <div class="wf-data" style="border: 1px solid #e4e4e7; border-radius: 16px; overflow: hidden; margin-bottom: 18px;">
+              <div style="padding: 16px 18px; border-bottom: 1px solid #f0f0f2;"><div style="font: 800 18px Manrope;">Balayage</div><div style="font: 500 12.5px Manrope; color: #71717a;">180 min</div></div>
+              <div style="display: flex; padding: 13px 18px; border-bottom: 1px solid #f0f0f2;"><span style="width: 80px; font: 500 12.5px Manrope; color: #a1a1aa;">With</span><span style="font: 600 13.5px Manrope;">Priya Anand</span></div>
+              <div style="display: flex; padding: 13px 18px; border-bottom: 1px solid #f0f0f2;"><span style="width: 80px; font: 500 12.5px Manrope; color: #a1a1aa;">When</span><span style="font: 600 13.5px Manrope;">Thu, Jun 18 · 10:30</span></div>
+              <div style="display: flex; padding: 13px 18px; align-items: center;"><span style="width: 80px; font: 500 12.5px Manrope; color: #a1a1aa;">Total</span><span style="font: 800 18px Manrope;">$180.00</span><span style="margin-left: auto; font: 500 11px Manrope; color: #71717a;">Pay at studio</span></div>
+            </div>
+            <div style="font: 500 11.5px/1.5 Manrope; color: #a1a1aa; text-wrap: pretty;">Free to cancel or reschedule up to 24h before. We’ll text you a reminder.</div>
+          </div>
+          <div style="margin-top: auto; padding: 16px 22px 24px; border-top: 1px solid #f0f0f2;"><div style="height: 52px; border-radius: 13px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font: 700 15.5px Manrope;">Confirm booking</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- STEP 3: time picker — 3 directions -->
+    <div style="margin-top: 40px;">
+      <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 20px;">
+        <div style="font: 700 16px Manrope;">Step 3 · Date &amp; time</div>
+        <span style="font: 500 13px 'JetBrains Mono', monospace; color: #9a9aa2;">the moment that has to feel effortless — 3 directions for the slot picker</span>
+      </div>
+      <div style="display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap;">
+
+        <!-- 3A: date strip + chip grid -->
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">A · Date strip + time chips</div>
+          <div style="width: 360px; height: 740px; background: #fff; border: 1px solid #cfcfd4; border-radius: 34px; box-shadow: 0 6px 22px rgba(0,0,0,.07); overflow: hidden; display: flex; flex-direction: column;">
+            <div class="wf-data" style="height: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font: 700 13px Manrope;"><span>9:41</span><span style="width: 18px; height: 10px; border: 1.5px solid #2a2a2e; border-radius: 2px;"></span></div>
+            <div style="padding: 14px 22px; border-bottom: 1px solid #f0f0f2; display: flex; align-items: center; gap: 9px;"><span style="font-size: 17px; color: #71717a;">‹</span><span style="width: 24px; height: 24px; border-radius: 7px; background: var(--accent); color: #fff; font: 800 12px Manrope; display: flex; align-items: center; justify-content: center;">L</span><span style="font: 700 14px Manrope;">Lumen Studio</span><span style="margin-left: auto; font: 600 11px 'JetBrains Mono', monospace; color: #a1a1aa;">3 / 4</span></div>
+            <div style="height: 3px; background: #ededef;"><div style="width: 75%; height: 100%; background: var(--accent);"></div></div>
+            <div style="padding: 20px 22px 0;"><div style="font: 800 21px Manrope; letter-spacing: -0.01em; margin-bottom: 16px;">Pick a time</div></div>
+            <!-- date strip -->
+            <div class="wf-data" style="display: flex; gap: 8px; padding: 0 22px 16px; overflow: hidden;">
+              <div style="flex-shrink: 0; width: 50px; text-align: center; padding: 9px 0; border-radius: 12px; border: 1px solid #e4e4e7;"><div style="font: 600 10px 'JetBrains Mono', monospace; color: #a1a1aa;">WED</div><div style="font: 700 17px Manrope;">17</div></div>
+              <div style="flex-shrink: 0; width: 50px; text-align: center; padding: 9px 0; border-radius: 12px; background: var(--accent); color: #fff;"><div style="font: 600 10px 'JetBrains Mono', monospace; opacity: .8;">THU</div><div style="font: 700 17px Manrope;">18</div></div>
+              <div style="flex-shrink: 0; width: 50px; text-align: center; padding: 9px 0; border-radius: 12px; border: 1px solid #e4e4e7;"><div style="font: 600 10px 'JetBrains Mono', monospace; color: #a1a1aa;">FRI</div><div style="font: 700 17px Manrope;">19</div></div>
+              <div style="flex-shrink: 0; width: 50px; text-align: center; padding: 9px 0; border-radius: 12px; border: 1px solid #e4e4e7;"><div style="font: 600 10px 'JetBrains Mono', monospace; color: #a1a1aa;">SAT</div><div style="font: 700 17px Manrope;">20</div></div>
+              <div style="flex-shrink: 0; width: 50px; text-align: center; padding: 9px 0; border-radius: 12px; border: 1px solid #f0f0f2; opacity: .5;"><div style="font: 600 10px 'JetBrains Mono', monospace; color: #c4c4c8;">SUN</div><div style="font: 700 17px Manrope; color: #c4c4c8;">21</div></div>
+            </div>
+            <div style="flex: 1; overflow: hidden; padding: 0 22px;">
+              <div class="wf-data" style="font: 600 11px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px;">Morning</div>
+              <div class="wf-data" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9px; margin-bottom: 18px;">
+                <span style="height: 44px; border: 1px solid #e4e4e7; border-radius: 11px; display: flex; align-items: center; justify-content: center; font: 600 14px Manrope; color: #52525b;">9:30</span>
+                <span style="height: 44px; border-radius: 11px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font: 700 14px Manrope;">10:30</span>
+                <span style="height: 44px; border: 1px solid #e4e4e7; border-radius: 11px; display: flex; align-items: center; justify-content: center; font: 600 14px Manrope; color: #52525b;">11:00</span>
+                <span style="height: 44px; border: 1px solid #f0f0f2; border-radius: 11px; display: flex; align-items: center; justify-content: center; font: 600 14px Manrope; color: #c4c4c8; text-decoration: line-through;">11:30</span>
+              </div>
+              <div class="wf-data" style="font: 600 11px 'JetBrains Mono', monospace; color: #a1a1aa; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px;">Afternoon</div>
+              <div class="wf-data" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9px;">
+                <span style="height: 44px; border: 1px solid #e4e4e7; border-radius: 11px; display: flex; align-items: center; justify-content: center; font: 600 14px Manrope; color: #52525b;">1:00</span>
+                <span style="height: 44px; border: 1px solid #e4e4e7; border-radius: 11px; display: flex; align-items: center; justify-content: center; font: 600 14px Manrope; color: #52525b;">2:30</span>
+                <span style="height: 44px; border: 1px solid #e4e4e7; border-radius: 11px; display: flex; align-items: center; justify-content: center; font: 600 14px Manrope; color: #52525b;">3:30</span>
+                <span style="height: 44px; border: 1px solid #e4e4e7; border-radius: 11px; display: flex; align-items: center; justify-content: center; font: 600 14px Manrope; color: #52525b;">4:00</span>
+                <span style="height: 44px; border: 1px solid #e4e4e7; border-radius: 11px; display: flex; align-items: center; justify-content: center; font: 600 14px Manrope; color: #52525b;">5:00</span>
+              </div>
+            </div>
+            <div style="padding: 16px 22px 24px; border-top: 1px solid #f0f0f2;"><div class="wf-data" style="height: 50px; border-radius: 13px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; font: 700 14.5px Manrope;">Continue · Thu 10:30</div></div>
+          </div>
+        </div>
+
+        <!-- 3B: mini month + grouped -->
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">B · Mini month + grouped slots</div>
+          <div style="width: 360px; height: 740px; background: #fff; border: 1px solid #cfcfd4; border-radius: 34px; box-shadow: 0 6px 22px rgba(0,0,0,.07); overflow: hidden; display: flex; flex-direction: column;">
+            <div class="wf-data" style="height: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font: 700 13px Manrope;"><span>9:41</span><span style="width: 18px; height: 10px; border: 1.5px solid #2a2a2e; border-radius: 2px;"></span></div>
+            <div style="padding: 14px 22px; border-bottom: 1px solid #f0f0f2; display: flex; align-items: center; gap: 9px;"><span style="font-size: 17px; color: #71717a;">‹</span><span style="width: 24px; height: 24px; border-radius: 7px; background: var(--accent); color: #fff; font: 800 12px Manrope; display: flex; align-items: center; justify-content: center;">L</span><span style="font: 700 14px Manrope;">Lumen Studio</span><span style="margin-left: auto; font: 600 11px 'JetBrains Mono', monospace; color: #a1a1aa;">3 / 4</span></div>
+            <div style="height: 3px; background: #ededef;"><div style="width: 75%; height: 100%; background: var(--accent);"></div></div>
+            <!-- mini month -->
+            <div style="padding: 18px 22px 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;"><span style="font: 700 15px Manrope;">June 2026</span><span style="display: flex; gap: 14px; color: #71717a; font-size: 15px;"><span>‹</span><span>›</span></span></div>
+              <div class="wf-data" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center;">
+                <span style="font: 600 9px 'JetBrains Mono', monospace; color: #c4c4c8; padding-bottom: 4px;">M</span><span style="font: 600 9px 'JetBrains Mono', monospace; color: #c4c4c8;">T</span><span style="font: 600 9px 'JetBrains Mono', monospace; color: #c4c4c8;">W</span><span style="font: 600 9px 'JetBrains Mono', monospace; color: #c4c4c8;">T</span><span style="font: 600 9px 'JetBrains Mono', monospace; color: #c4c4c8;">F</span><span style="font: 600 9px 'JetBrains Mono', monospace; color: #c4c4c8;">S</span><span style="font: 600 9px 'JetBrains Mono', monospace; color: #c4c4c8;">S</span>
+                <span style="height: 32px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope; color: #c4c4c8;">15</span><span style="height: 32px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope; color: #c4c4c8;">16</span><span style="height: 32px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope;">17</span><span style="height: 32px; display: flex; align-items: center; justify-content: center; font: 700 12.5px Manrope; color: #fff; background: var(--accent); border-radius: 9px;">18</span><span style="height: 32px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope;">19</span><span style="height: 32px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope;">20</span><span style="height: 32px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope; color: #c4c4c8;">21</span>
+                <span style="height: 32px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope;">22</span><span style="height: 32px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope;">23</span><span style="height: 32px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope;">24</span><span style="height: 32px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope;">25</span><span style="height: 32px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope;">26</span><span style="height: 32px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope;">27</span><span style="height: 32px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope; color: #c4c4c8;">28</span>
+              </div>
+            </div>
+            <div style="height: 1px; background: #f0f0f2; margin: 0 22px;"></div>
+            <div style="flex: 1; overflow: hidden; padding: 16px 22px 0;">
+              <div class="wf-data" style="font: 700 13px Manrope; margin-bottom: 12px;">Thursday, Jun 18</div>
+              <div class="wf-data" style="display: flex; flex-direction: column; gap: 8px;">
+                <span style="height: 46px; border: 1px solid #e4e4e7; border-radius: 12px; display: flex; align-items: center; padding: 0 16px; font: 600 14px Manrope; color: #52525b;">9:30 AM <span style="margin-left: auto; font: 500 11px Manrope; color: #a1a1aa;">Priya</span></span>
+                <span style="height: 46px; border-radius: 12px; background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; font: 700 14px Manrope;">10:30 AM <span style="margin-left: auto; font: 500 11px Manrope; opacity: .85;">Priya</span></span>
+                <span style="height: 46px; border: 1px solid #e4e4e7; border-radius: 12px; display: flex; align-items: center; padding: 0 16px; font: 600 14px Manrope; color: #52525b;">1:00 PM <span style="margin-left: auto; font: 500 11px Manrope; color: #a1a1aa;">Priya</span></span>
+                <span style="height: 46px; border: 1px solid #e4e4e7; border-radius: 12px; display: flex; align-items: center; padding: 0 16px; font: 600 14px Manrope; color: #52525b;">3:30 PM <span style="margin-left: auto; font: 500 11px Manrope; color: #a1a1aa;">Priya</span></span>
+              </div>
+            </div>
+            <div style="padding: 16px 22px 24px; border-top: 1px solid #f0f0f2;"><div class="wf-data" style="height: 50px; border-radius: 13px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font: 700 14.5px Manrope;">Continue · Thu 10:30</div></div>
+          </div>
+        </div>
+
+        <!-- 3C: next-available rail -->
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">C · “Soonest available” rail</div>
+          <div style="width: 360px; height: 740px; background: #fff; border: 1px solid #cfcfd4; border-radius: 34px; box-shadow: 0 6px 22px rgba(0,0,0,.07); overflow: hidden; display: flex; flex-direction: column;">
+            <div class="wf-data" style="height: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font: 700 13px Manrope;"><span>9:41</span><span style="width: 18px; height: 10px; border: 1.5px solid #2a2a2e; border-radius: 2px;"></span></div>
+            <div style="padding: 14px 22px; border-bottom: 1px solid #f0f0f2; display: flex; align-items: center; gap: 9px;"><span style="font-size: 17px; color: #71717a;">‹</span><span style="width: 24px; height: 24px; border-radius: 7px; background: var(--accent); color: #fff; font: 800 12px Manrope; display: flex; align-items: center; justify-content: center;">L</span><span style="font: 700 14px Manrope;">Lumen Studio</span><span style="margin-left: auto; font: 600 11px 'JetBrains Mono', monospace; color: #a1a1aa;">3 / 4</span></div>
+            <div style="height: 3px; background: #ededef;"><div style="width: 75%; height: 100%; background: var(--accent);"></div></div>
+            <div style="padding: 20px 22px 14px;">
+              <div style="font: 800 21px Manrope; letter-spacing: -0.01em; margin-bottom: 4px;">Soonest we can fit you</div>
+              <div style="font: 500 12.5px Manrope; color: #71717a;">Balayage with Priya · 180 min</div>
+            </div>
+            <!-- soonest highlight -->
+            <div style="margin: 0 22px 16px; padding: 15px 16px; border: 1.5px solid var(--accent); border-radius: 14px; display: flex; align-items: center; gap: 12px;"><div style="flex: 1;"><div class="wf-data" style="font: 800 17px Manrope;">Thu, Jun 18 · 10:30</div><div style="font: 500 12px Manrope; color: #71717a;">Earliest opening</div></div><span style="font: 700 11px 'JetBrains Mono', monospace; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 4px 9px;">Pick</span></div>
+            <div style="font: 600 12px Manrope; color: #3f3f46; padding: 0 22px 10px;">Or browse by day</div>
+            <div style="flex: 1; overflow: hidden; padding: 0 22px;">
+              <div class="wf-data" style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="border: 1px solid #e4e4e7; border-radius: 12px; padding: 13px 15px;"><div style="display: flex; align-items: center; margin-bottom: 9px;"><span style="font: 700 13px Manrope;">Thu, Jun 18</span><span style="margin-left: auto; font: 500 11px Manrope; color: #a1a1aa;">4 open</span></div><div style="display: flex; gap: 7px;"><span style="flex: 1; height: 34px; border: 1px solid #e4e4e7; border-radius: 9px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope; color: #52525b;">9:30</span><span style="flex: 1; height: 34px; border-radius: 9px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font: 700 12.5px Manrope;">10:30</span><span style="flex: 1; height: 34px; border: 1px solid #e4e4e7; border-radius: 9px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope; color: #52525b;">1:00</span></div></div>
+                <div style="border: 1px solid #e4e4e7; border-radius: 12px; padding: 13px 15px;"><div style="display: flex; align-items: center; margin-bottom: 9px;"><span style="font: 700 13px Manrope;">Fri, Jun 19</span><span style="margin-left: auto; font: 500 11px Manrope; color: #a1a1aa;">6 open</span></div><div style="display: flex; gap: 7px;"><span style="flex: 1; height: 34px; border: 1px solid #e4e4e7; border-radius: 9px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope; color: #52525b;">10:00</span><span style="flex: 1; height: 34px; border: 1px solid #e4e4e7; border-radius: 9px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope; color: #52525b;">11:30</span><span style="flex: 1; height: 34px; border: 1px solid #e4e4e7; border-radius: 9px; display: flex; align-items: center; justify-content: center; font: 600 12.5px Manrope; color: #52525b;">2:00</span></div></div>
+                <div style="border: 1px solid #e4e4e7; border-radius: 12px; padding: 13px 15px;"><div style="display: flex; align-items: center;"><span style="font: 700 13px Manrope;">Sat, Jun 20</span><span style="margin-left: auto; font: 500 11px Manrope; color: #a1a1aa;">2 open</span></div></div>
+              </div>
+            </div>
+            <div style="padding: 16px 22px 24px; border-top: 1px solid #f0f0f2;"><div class="wf-data" style="height: 50px; border-radius: 13px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font: 700 14.5px Manrope;">Continue · Thu 10:30</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 08 · CONFIRMATION + MANAGE ============ -->
+  <section style="margin-top: 72px;">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px;">
+      <h2 style="font: 800 24px Manrope; margin: 0; letter-spacing: -0.01em;">08 · Confirmation &amp; manage</h2>
+      <span style="font: 500 13px 'JetBrains Mono', monospace; color: #9a9aa2;">booked → reschedule / cancel, no account required</span>
+    </div>
+    <div style="display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap;">
+
+      <!-- confirmation -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">Confirmation</div>
+        <div style="width: 360px; height: 740px; background: #fff; border: 1px solid #cfcfd4; border-radius: 34px; box-shadow: 0 6px 22px rgba(0,0,0,.07); overflow: hidden; display: flex; flex-direction: column;">
+          <div class="wf-data" style="height: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font: 700 13px Manrope;"><span>9:41</span><span style="width: 18px; height: 10px; border: 1.5px solid #2a2a2e; border-radius: 2px;"></span></div>
+          <div style="padding: 40px 26px 0; text-align: center;">
+            <div style="width: 76px; height: 76px; border-radius: 50%; background: var(--accent); margin: 0 auto 22px; display: flex; align-items: center; justify-content: center; color: #fff; font: 800 34px Manrope;">✓</div>
+            <div style="font: 800 25px Manrope; letter-spacing: -0.01em; margin-bottom: 8px;">You’re booked</div>
+            <div style="font: 500 13.5px/1.5 Manrope; color: #71717a; margin-bottom: 26px;">A confirmation went to your phone and email. See you soon!</div>
+          </div>
+          <div class="wf-data" style="margin: 0 26px; border: 1px solid #e4e4e7; border-radius: 16px; overflow: hidden; text-align: left;">
+            <div style="padding: 16px 18px; border-bottom: 1px solid #f0f0f2;"><div style="font: 800 17px Manrope;">Balayage</div><div style="font: 500 12.5px Manrope; color: #71717a;">with Priya Anand · 180 min</div></div>
+            <div style="display: flex; align-items: center; gap: 13px; padding: 16px 18px;"><div style="text-align: center;"><div style="font: 600 10px 'JetBrains Mono', monospace; color: #a1a1aa;">JUN</div><div style="font: 800 20px Manrope; color: var(--accent);">18</div></div><div><div style="font: 700 14px Manrope;">Thursday, 10:30 AM</div><div style="font: 500 12px Manrope; color: #71717a;">Lumen Studio · 24 Pearl St</div></div></div>
+          </div>
+          <div style="padding: 20px 26px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="height: 48px; border-radius: 12px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; font: 700 14px Manrope;">Add to calendar</div>
+            <div style="height: 48px; border: 1px solid #d4d4d8; border-radius: 12px; display: flex; align-items: center; justify-content: center; font: 600 14px Manrope; color: #3f3f46;">Manage booking</div>
+          </div>
+          <div style="margin-top: auto; padding: 0 26px 26px; text-align: center; font: 500 11.5px Manrope; color: #a1a1aa;">Booking ref · LUM-4821</div>
+        </div>
+      </div>
+
+      <!-- manage -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">Manage booking</div>
+        <div style="width: 360px; height: 740px; background: #fff; border: 1px solid #cfcfd4; border-radius: 34px; box-shadow: 0 6px 22px rgba(0,0,0,.07); overflow: hidden; display: flex; flex-direction: column;">
+          <div class="wf-data" style="height: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font: 700 13px Manrope;"><span>9:41</span><span style="width: 18px; height: 10px; border: 1.5px solid #2a2a2e; border-radius: 2px;"></span></div>
+          <div style="padding: 14px 22px; border-bottom: 1px solid #f0f0f2; display: flex; align-items: center; gap: 9px;"><span style="width: 24px; height: 24px; border-radius: 7px; background: var(--accent); color: #fff; font: 800 12px Manrope; display: flex; align-items: center; justify-content: center;">L</span><span style="font: 700 14px Manrope;">Your booking</span></div>
+          <div style="padding: 24px 22px 0;">
+            <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 16px;"><span style="width: 8px; height: 8px; border-radius: 2px; background: #3f3f46;"></span><span style="font: 600 11.5px 'JetBrains Mono', monospace; color: #52525b; text-transform: uppercase; letter-spacing: .08em;">Confirmed</span></div>
+            <div class="wf-data" style="border: 1px solid #e4e4e7; border-radius: 16px; overflow: hidden; margin-bottom: 20px;">
+              <div style="padding: 16px 18px; border-bottom: 1px solid #f0f0f2;"><div style="font: 800 18px Manrope;">Balayage</div><div style="font: 500 12.5px Manrope; color: #71717a;">with Priya Anand</div></div>
+              <div style="display: flex; padding: 13px 18px; border-bottom: 1px solid #f0f0f2;"><span style="width: 76px; font: 500 12.5px Manrope; color: #a1a1aa;">When</span><span style="font: 600 13.5px Manrope;">Thu, Jun 18 · 10:30</span></div>
+              <div style="display: flex; padding: 13px 18px;"><span style="width: 76px; font: 500 12.5px Manrope; color: #a1a1aa;">Total</span><span style="font: 700 15px Manrope;">$180.00</span></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="height: 48px; border-radius: 12px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font: 700 14px Manrope;">Reschedule</div>
+              <div style="height: 48px; border: 1px solid #d4d4d8; border-radius: 12px; display: flex; align-items: center; justify-content: center; font: 600 14px Manrope; color: #71717a;">Cancel booking</div>
+            </div>
+          </div>
+          <div style="margin-top: auto; padding: 20px 22px 26px;">
+            <div style="background: #f7f7f8; border-radius: 12px; padding: 14px 16px; font: 500 12px/1.5 Manrope; color: #71717a; text-wrap: pretty;">Free to change up to <span style="font-weight: 700; color: #3f3f46;">Wed, Jun 17 · 10:30</span>. After that a 50% fee applies.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- callout -->
+      <div style="width: 300px; align-self: center; padding: 22px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; color: var(--accent); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 12px;">One product family</div>
+        <div style="font: 500 14px/1.6 Manrope; color: #52525b; text-wrap: pretty;">The operator app and the booking site share the same type scale, spacing rhythm, status language and the single <span style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; background: #f4f4f5; padding: 1px 6px; border-radius: 5px; border: 1px solid #d4d4d8;">--brand</span> token. Drop in any tenant’s color and logo — the system stays whole.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 09 · STATES ============ -->
+  <section style="margin-top: 72px;">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px;">
+      <h2 style="font: 800 24px Manrope; margin: 0; letter-spacing: -0.01em;">09 · Empty · Loading · Error</h2>
+      <span style="font: 500 13px 'JetBrains Mono', monospace; color: #9a9aa2;">the data-heavy moments — treated as invitations, not afterthoughts</span>
+    </div>
+    <div style="display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap;">
+
+      <!-- empty calendar -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">Empty · calendar</div>
+        <div style="width: 420px; height: 320px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.05); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center;">
+          <div style="width: 56px; height: 56px; border: 1.5px dashed #c4c4c8; border-radius: 14px; margin-bottom: 18px; display: flex; align-items: center; justify-content: center;"><span style="width: 22px; height: 22px; border: 1.5px solid #c4c4c8; border-radius: 6px;"></span></div>
+          <div style="font: 700 17px Manrope; margin-bottom: 6px;">Nothing booked yet today</div>
+          <div style="font: 500 13px/1.5 Manrope; color: #71717a; margin-bottom: 20px; max-width: 280px;">A clear day. Add the first appointment or share your booking link.</div>
+          <div style="display: flex; gap: 10px;"><div style="height: 40px; padding: 0 16px; border-radius: 10px; background: var(--accent); color: #fff; display: flex; align-items: center; gap: 7px; font: 600 13px Manrope;"><span style="font-size: 15px;">+</span>New appointment</div><div style="height: 40px; padding: 0 16px; border: 1px solid #d4d4d8; border-radius: 10px; display: flex; align-items: center; font: 600 13px Manrope; color: #3f3f46;">Copy booking link</div></div>
+        </div>
+      </div>
+
+      <!-- empty clients -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">Empty · clients</div>
+        <div style="width: 300px; height: 320px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.05); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center;">
+          <div style="width: 56px; height: 56px; border: 1.5px dashed #c4c4c8; border-radius: 50%; margin-bottom: 18px; display: flex; align-items: center; justify-content: center;"><span style="width: 20px; height: 20px; border: 1.5px solid #c4c4c8; border-radius: 50%;"></span></div>
+          <div style="font: 700 17px Manrope; margin-bottom: 6px;">No clients yet</div>
+          <div style="font: 500 13px/1.5 Manrope; color: #71717a; margin-bottom: 20px;">They’ll appear here after the first booking.</div>
+          <div style="height: 40px; padding: 0 16px; border-radius: 10px; background: var(--accent); color: #fff; display: flex; align-items: center; gap: 7px; font: 600 13px Manrope;"><span style="font-size: 15px;">+</span>Add client</div>
+        </div>
+      </div>
+
+      <!-- loading -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">Loading · skeleton</div>
+        <div style="width: 300px; height: 320px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.05); padding: 22px; overflow: hidden;">
+          <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 22px;"><span class="now-dot" style="width: 40px; height: 40px; border-radius: 50%; background: #ededef;"></span><div style="flex: 1;"><div class="now-dot" style="height: 12px; width: 60%; background: #ededef; border-radius: 4px; margin-bottom: 8px;"></div><div class="now-dot" style="height: 10px; width: 40%; background: #f0f0f2; border-radius: 4px;"></div></div></div>
+          <div class="now-dot" style="height: 56px; background: #f4f4f5; border-radius: 11px; margin-bottom: 11px;"></div>
+          <div class="now-dot" style="height: 56px; background: #f4f4f5; border-radius: 11px; margin-bottom: 11px;"></div>
+          <div class="now-dot" style="height: 56px; background: #f7f7f8; border-radius: 11px;"></div>
+        </div>
+      </div>
+
+      <!-- error -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #71717a;">Error · couldn’t load</div>
+        <div style="width: 300px; height: 320px; background: #fff; border: 1px solid #cfcfd4; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.05); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center;">
+          <div style="width: 56px; height: 56px; border: 1.5px solid #c4c4c8; border-radius: 14px; margin-bottom: 18px; display: flex; align-items: center; justify-content: center; font: 700 24px Manrope; color: #a1a1aa;">!</div>
+          <div style="font: 700 17px Manrope; margin-bottom: 6px;">Couldn’t load the schedule</div>
+          <div style="font: 500 13px/1.5 Manrope; color: #71717a; margin-bottom: 20px;">Check your connection — your data is safe.</div>
+          <div style="display: flex; gap: 10px;"><div style="height: 40px; padding: 0 18px; border-radius: 10px; background: var(--accent); color: #fff; display: flex; align-items: center; font: 600 13px Manrope;">Try again</div><div style="height: 40px; padding: 0 16px; border: 1px solid #d4d4d8; border-radius: 10px; display: flex; align-items: center; font: 600 13px Manrope; color: #3f3f46;">Get help</div></div>
+        </div>
+      </div>
+
+    </div>
+    <div style="height: 40px;"></div>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1400, &quot;height&quot;: 900}, &quot;accent&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#5b5b66&quot;, &quot;tsType&quot;: &quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#5b5b66' };
+  }
+}
+</script>
+</body>
+</html>
