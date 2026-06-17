@@ -40,6 +40,69 @@ function heightFor(durationMin: number): number {
   return (durationMin / 60) * HOUR_PX;
 }
 
+/**
+ * Interval-graph column assignment. Given appointments for a single column
+ * (one day, or one staff's day), assigns each to the lowest-indexed "lane"
+ * whose previous appointment has already ended, and reports how many lanes are
+ * concurrently in use within each cluster of mutually-overlapping appointments.
+ * Returns one entry per input appointment with its lane index + the lane count
+ * of its cluster, so callers can position it side-by-side at
+ * left = lane/laneCount, width = 1/laneCount.
+ */
+type Laid<T> = { appt: T; lane: number; laneCount: number };
+
+function layoutLanes<T extends { startTime: string; durationMin: number }>(
+  items: T[],
+): Laid<T>[] {
+  const sorted = [...items].sort((a, b) => {
+    const sa = toMinutes(a.startTime);
+    const sb = toMinutes(b.startTime);
+    if (sa !== sb) return sa - sb;
+    return b.durationMin - a.durationMin;
+  });
+
+  const result: Laid<T>[] = [];
+  // Indices (into result) of the appointments in the current overlapping cluster.
+  let cluster: number[] = [];
+  // End minute (exclusive) of the latest-ending appointment in each lane.
+  let laneEnds: number[] = [];
+  // The furthest end minute reached so far within the cluster.
+  let clusterEnd = -Infinity;
+
+  const flushCluster = () => {
+    const laneCount = laneEnds.length;
+    for (const idx of cluster) result[idx].laneCount = laneCount;
+    cluster = [];
+    laneEnds = [];
+    clusterEnd = -Infinity;
+  };
+
+  for (const appt of sorted) {
+    const start = toMinutes(appt.startTime);
+    const end = start + appt.durationMin;
+
+    // If this appointment starts after everything in the current cluster has
+    // ended, the cluster is closed: finalize its laneCount and start fresh.
+    if (start >= clusterEnd) flushCluster();
+
+    // Find the lowest-indexed lane that is free (its last appt ends <= start).
+    let lane = laneEnds.findIndex((laneEnd) => laneEnd <= start);
+    if (lane === -1) {
+      lane = laneEnds.length;
+      laneEnds.push(end);
+    } else {
+      laneEnds[lane] = end;
+    }
+
+    clusterEnd = Math.max(clusterEnd, end);
+    result.push({ appt, lane, laneCount: 1 });
+    cluster.push(result.length - 1);
+  }
+
+  flushCluster();
+  return result;
+}
+
 interface Props {
   dateIso: string;
   view: View;
@@ -279,9 +342,14 @@ function DayGrid({
               className="relative flex-1 cursor-pointer border-l border-line-soft"
               onClick={onNew}
             >
-              {(byStaff.get(s.id) ?? []).map((a) => {
+              {layoutLanes(byStaff.get(s.id) ?? []).map(({ appt: a, lane, laneCount }) => {
                 const st = STATUS_STYLES[a.status];
                 const isNoShow = a.status === "noshow";
+                // 4px outer inset on each side; 2px gap between lanes.
+                const INSET = 4;
+                const GAP = 2;
+                const left = `calc(${INSET}px + (100% - ${INSET * 2}px) * ${lane} / ${laneCount} + ${lane > 0 ? GAP / 2 : 0}px)`;
+                const width = `calc((100% - ${INSET * 2}px) / ${laneCount} - ${laneCount > 1 ? GAP : 0}px)`;
                 return (
                   <button
                     key={a.id}
@@ -289,10 +357,12 @@ function DayGrid({
                       e.stopPropagation();
                       onOpen(a.id);
                     }}
-                    className="absolute left-1 right-1 overflow-hidden rounded-[9px] border px-[9px] py-[5px] text-left transition-[box-shadow,filter] hover:shadow-[0_2px_8px_rgba(40,40,46,.08)] hover:brightness-[.98]"
+                    className="absolute overflow-hidden rounded-[9px] border px-[9px] py-[5px] text-left transition-[box-shadow,filter] hover:z-10 hover:shadow-[0_2px_8px_rgba(40,40,46,.08)] hover:brightness-[.98]"
                     style={{
                       top: topFor(a.startTime),
                       height: heightFor(a.durationMin),
+                      left,
+                      width,
                       background: isNoShow
                         ? "repeating-linear-gradient(45deg, #f0ddd8 0 6px, #f7ebe7 6px 12px)"
                         : st.bg,
@@ -404,17 +474,25 @@ function WeekGrid({
                     <span className="absolute -left-1 -top-1 size-[9px] rounded-full bg-brand" />
                   </div>
                 )}
-                {(byDay.get(d) ?? []).map((a) => {
+                {layoutLanes(byDay.get(d) ?? []).map(({ appt: a, lane, laneCount }) => {
                   const st = STATUS_STYLES[a.status];
                   const isNoShow = a.status === "noshow";
+                  // 3px outer inset on each side; 2px gap between lanes.
+                  const INSET = 3;
+                  const GAP = 2;
+                  const left = `calc(${INSET}px + (100% - ${INSET * 2}px) * ${lane} / ${laneCount} + ${lane > 0 ? GAP / 2 : 0}px)`;
+                  const width = `calc((100% - ${INSET * 2}px) / ${laneCount} - ${laneCount > 1 ? GAP : 0}px)`;
+                  const narrow = laneCount > 1;
                   return (
                     <button
                       key={a.id}
                       onClick={() => onOpen(a.id)}
-                      className="absolute left-[3px] right-[3px] overflow-hidden rounded-[7px] border px-[7px] py-1 text-left transition-[box-shadow,filter] hover:shadow-[0_2px_8px_rgba(40,40,46,.08)] hover:brightness-[.98]"
+                      className="absolute overflow-hidden rounded-[7px] border px-[7px] py-1 text-left transition-[box-shadow,filter] hover:z-10 hover:shadow-[0_2px_8px_rgba(40,40,46,.08)] hover:brightness-[.98]"
                       style={{
                         top: topFor(a.startTime),
                         height: Math.max(heightFor(a.durationMin), 22),
+                        left,
+                        width,
                         background: isNoShow
                           ? "repeating-linear-gradient(45deg, #f0ddd8 0 6px, #f7ebe7 6px 12px)"
                           : st.bg,
@@ -429,9 +507,9 @@ function WeekGrid({
                           textDecoration: a.status === "cancelled" ? "line-through" : "none",
                         }}
                       >
-                        {a.startTime} {shortNameOf(a.client.name)}
+                        {narrow ? shortNameOf(a.client.name) : `${a.startTime} ${shortNameOf(a.client.name)}`}
                       </div>
-                      {heightFor(a.durationMin) > 34 && (
+                      {!narrow && heightFor(a.durationMin) > 34 && (
                         <div
                           className="overflow-hidden text-ellipsis whitespace-nowrap text-[10px] font-medium"
                           style={{ color: st.sub }}

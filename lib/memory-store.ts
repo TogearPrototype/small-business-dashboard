@@ -191,6 +191,38 @@ export function getAppointment(tenantId: string, id: string): AppointmentDetail 
   return a ? hydrate(tenantId, a) : undefined;
 }
 
+/**
+ * Apply the client-stat delta for a status transition. A "completed" status
+ * contributes +1 visit and +priceCents spend; a "noshow" contributes +1
+ * no-show; all other statuses contribute nothing. To transition we remove the
+ * previous status' contribution then add the next status', so the client
+ * totals stay consistent across any sequence of changes. Counters never go
+ * below 0.
+ */
+function applyDelta(
+  prevStatus: AppointmentStatus,
+  nextStatus: AppointmentStatus,
+  client: Pick<Client, "visits" | "totalSpendCents" | "noShows">,
+  priceCents: number,
+): { visits: number; totalSpendCents: number; noShows: number } {
+  let { visits, totalSpendCents, noShows } = client;
+  const contribute = (status: AppointmentStatus, sign: 1 | -1) => {
+    if (status === "completed") {
+      visits += sign;
+      totalSpendCents += sign * priceCents;
+    } else if (status === "noshow") {
+      noShows += sign;
+    }
+  };
+  contribute(prevStatus, -1);
+  contribute(nextStatus, 1);
+  return {
+    visits: Math.max(0, visits),
+    totalSpendCents: Math.max(0, totalSpendCents),
+    noShows: Math.max(0, noShows),
+  };
+}
+
 export function setAppointmentStatus(
   tenantId: string,
   id: string,
@@ -198,6 +230,18 @@ export function setAppointmentStatus(
 ): AppointmentDetail | undefined {
   const a = data.appointments.find((x) => x.tenantId === tenantId && x.id === id);
   if (!a) return undefined;
+
+  // Apply the stat delta for this transition before writing the new status.
+  if (a.status !== status) {
+    const client = data.clients.find((c) => c.tenantId === tenantId && c.id === a.clientId);
+    if (client) {
+      const next = applyDelta(a.status, status, client, a.priceCents);
+      client.visits = next.visits;
+      client.totalSpendCents = next.totalSpendCents;
+      client.noShows = next.noShows;
+    }
+  }
+
   a.status = status;
   return hydrate(tenantId, a);
 }

@@ -1,9 +1,18 @@
 import { notFound } from "next/navigation";
 import { getServices, getStaff, getTenant } from "@/lib/store";
-import { DEMO_DATE } from "@/lib/seed-data";
-import { BookingFlow } from "@/components/booking/BookingFlow";
+import { Hero } from "@/components/booking/home/Hero";
+import { ServicesPreview } from "@/components/booking/home/ServicesPreview";
+import { TeamStrip } from "@/components/booking/home/TeamStrip";
+import { InfoSection } from "@/components/booking/home/InfoSection";
 
-export default async function BookPage({
+/**
+ * Tenant HOME page — the public landing page for a booking site. Async server
+ * component: resolves the tenant from the slug, loads real services + staff,
+ * and composes the marketing sections. Renders inside the site shell
+ * (PublicHeader/PublicFooter + max-w <main> from the layout), so it adds no
+ * header/footer/width wrapper of its own.
+ */
+export default async function HomePage({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -18,6 +27,11 @@ export default async function BookPage({
   ]);
 
   return (
-    <BookingFlow tenant={tenant} services={services} staff={staff} startDate={DEMO_DATE} />
+    <div className="pb-4">
+      <Hero tenant={tenant} />
+      <ServicesPreview slug={tenant.slug} services={services} />
+      <TeamStrip staff={staff} />
+      <InfoSection tenant={tenant} />
+    </div>
   );
 }

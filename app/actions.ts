@@ -46,6 +46,8 @@ export async function changeAppointmentStatus(id: string, status: AppointmentSta
   await setAppointmentStatus(tenant.id, id, status);
   revalidatePath("/operator/calendar");
   revalidatePath("/operator/dashboard");
+  // Status transitions adjust client visits/spend/no-shows.
+  revalidatePath("/operator/clients");
 }
 
 export async function submitBooking(
@@ -94,6 +96,8 @@ export async function cancelByRef(ref: string): Promise<{ ok: boolean }> {
   await setAppointmentStatus(tenant.id, appt.id, "cancelled");
   revalidatePath("/operator/calendar");
   revalidatePath("/operator/dashboard");
+  // Cancelling can remove a prior completed/no-show contribution.
+  revalidatePath("/operator/clients");
   return { ok: true };
 }
 

@@ -120,15 +120,11 @@ export function BookingFlow({
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-0 sm:p-6">
-      {/* Phone frame on desktop; full-bleed on mobile */}
-      <div className="flex h-screen w-full flex-col overflow-hidden bg-surface sm:h-[760px] sm:w-[390px] sm:rounded-[34px] sm:border sm:border-line sm:shadow-[0_6px_22px_rgba(0,0,0,.09)]">
+    <div className="mx-auto flex w-full max-w-[480px] flex-col">
+      {/* Clean centered booking card — sits inside the global PublicHeader/footer shell. */}
+      <div className="flex min-h-[560px] w-full flex-col overflow-hidden rounded-[20px] border border-line bg-surface shadow-[0_4px_18px_rgba(0,0,0,.05)]">
         {step !== "done" && (
-          <Header
-            tenant={tenant}
-            step={step}
-            onBack={step === "service" ? undefined : () => goBack(step, setStep)}
-          />
+          <Header step={step} onBack={step === "service" ? undefined : () => goBack(step, setStep)} />
         )}
 
         {step === "service" && (
@@ -215,11 +211,9 @@ function goBack(step: Step, setStep: (s: Step) => void) {
 // ---------- shared chrome ----------
 
 function Header({
-  tenant,
   step,
   onBack,
 }: {
-  tenant: Tenant;
   step: Step;
   onBack?: () => void;
 }) {
@@ -227,20 +221,13 @@ function Header({
   const progress = step === "review" ? 100 : (idx / 4) * 100;
   return (
     <>
-      <div className="flex h-[42px] flex-shrink-0 items-center justify-between px-6 text-[13px] font-bold">
-        <span className="tnum">9:41</span>
-        <span className="h-[10px] w-[18px] rounded-[2px] border-[1.5px] border-ink" />
-      </div>
       <div className="flex items-center gap-[9px] border-b border-line-soft px-[22px] py-[14px]">
         {onBack && (
           <button onClick={onBack} className="text-[17px] text-ink-faint" aria-label="Back">
             ‹
           </button>
         )}
-        <span className="flex size-6 items-center justify-center rounded-[7px] bg-brand text-[12px] font-bold text-white">
-          {tenant.logoMark}
-        </span>
-        <span className="text-[14px] font-bold">{tenant.name}</span>
+        <span className="text-[14px] font-bold">Book an appointment</span>
         {step !== "review" && (
           <span className="ml-auto text-[11px] font-semibold text-ink-ghost">{idx} / 4</span>
         )}
@@ -443,19 +430,30 @@ function TimeStep({
   const [activeDate, setActiveDate] = useState(selectedDate ?? dates[0]?.iso);
   const [slots, setSlots] = useState<{ morning: Slot[]; afternoon: Slot[] }>({ morning: [], afternoon: [] });
   const [loading, setLoading] = useState(true);
+  // The earliest available slot for the currently active date (slots are sorted).
+  const [earliest, setEarliest] = useState<Slot | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+    setEarliest(null);
     fetchSlots(tenantSlug, service.id, activeDate, staffId ?? undefined).then((res) => {
-      if (!cancelled) {
-        setSlots({ morning: res.morning, afternoon: res.afternoon });
-        setLoading(false);
+      if (cancelled) return;
+      setSlots({ morning: res.morning, afternoon: res.afternoon });
+      const first = res.all[0] ?? null;
+      setEarliest(first);
+      setLoading(false);
+      // Auto-select the earliest slot if nothing is chosen yet for this date.
+      if (first && !(selectedDate === activeDate && selectedTime)) {
+        onPick(activeDate, first.time, first.staffId);
       }
     });
     return () => {
       cancelled = true;
     };
+    // selectedDate/selectedTime/onPick intentionally omitted: we only auto-select
+    // on (re)load of a date; user picks afterward are preserved.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tenantSlug, service.id, activeDate, staffId]);
 
   function renderGroup(label: string, list: Slot[]) {
@@ -468,16 +466,29 @@ function TimeStep({
         <div className="tnum mb-[18px] grid grid-cols-3 gap-[9px]">
           {list.map((slot) => {
             const active = selectedDate === activeDate && selectedTime === slot.time;
+            const isEarliest = earliest?.time === slot.time;
             return (
               <button
                 key={`${slot.time}-${slot.staffId}`}
                 onClick={() => onPick(activeDate, slot.time, slot.staffId)}
                 className={cx(
-                  "flex h-11 items-center justify-center rounded-[11px] text-[14px] font-semibold",
+                  "relative flex h-11 items-center justify-center rounded-[11px] text-[14px] font-semibold transition-[filter,colors]",
                   active ? "bg-brand text-white" : "border border-line text-ink-soft",
+                  isEarliest && "ring-brand",
+                  isEarliest && !active && "text-brand",
                 )}
               >
                 {to12h(slot.time).replace(" ", "").replace(":00", "")}
+                {isEarliest && (
+                  <span
+                    className={cx(
+                      "absolute -top-[7px] left-1/2 -translate-x-1/2 rounded-full px-[6px] py-[1px] text-[8.5px] font-bold uppercase tracking-[0.04em]",
+                      active ? "bg-white text-brand" : "bg-brand text-white",
+                    )}
+                  >
+                    Soonest
+                  </span>
+                )}
               </button>
             );
           })}
@@ -732,10 +743,6 @@ function DoneStep({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex h-[42px] flex-shrink-0 items-center justify-between px-6 text-[13px] font-bold">
-        <span className="tnum">9:41</span>
-        <span className="h-[10px] w-[18px] rounded-[2px] border-[1.5px] border-ink" />
-      </div>
       <div className="px-[26px] pt-10 text-center">
         <div className="mx-auto mb-[22px] flex size-[76px] items-center justify-center rounded-full bg-brand font-display text-[34px] font-bold text-white">
           ✓

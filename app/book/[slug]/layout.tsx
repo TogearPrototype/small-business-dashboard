@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTenant } from "@/lib/store";
+import { PublicHeader } from "@/components/booking/PublicHeader";
+import { PublicFooter } from "@/components/booking/PublicFooter";
 
 // Per-tenant booking site is resolved from live data per request.
 export const dynamic = "force-dynamic";
@@ -22,10 +24,14 @@ export default async function BookLayout({
 
   return (
     <div
-      className="min-h-screen bg-canvas"
+      className="flex min-h-screen flex-col bg-canvas"
       style={{ ["--brand" as string]: tenant.brandColor }}
     >
-      {children}
+      <PublicHeader tenant={tenant} />
+      <main className="mx-auto w-full max-w-[1080px] flex-1 px-5 py-8 sm:px-8 sm:py-12">
+        {children}
+      </main>
+      <PublicFooter tenant={tenant} />
     </div>
   );
 }

@@ -315,11 +315,73 @@ export async function getAppointment(
   return hydrateWith(toAppointment(rows[0]), maps.clientMap, maps.staffMap, maps.serviceMap);
 }
 
+/**
+ * Apply the client-stat delta for a status transition. A "completed" status
+ * contributes +1 visit and +priceCents spend; a "noshow" contributes +1
+ * no-show; all other statuses contribute nothing. To transition we remove the
+ * previous status' contribution then add the next status', so the client
+ * totals stay consistent across any sequence of changes. Counters never go
+ * below 0. Mirrors applyDelta in lib/memory-store.ts.
+ */
+function applyDelta(
+  prevStatus: AppointmentStatus,
+  nextStatus: AppointmentStatus,
+  client: Pick<Client, "visits" | "totalSpendCents" | "noShows">,
+  priceCents: number,
+): { visits: number; totalSpendCents: number; noShows: number } {
+  let { visits, totalSpendCents, noShows } = client;
+  const contribute = (status: AppointmentStatus, sign: 1 | -1) => {
+    if (status === "completed") {
+      visits += sign;
+      totalSpendCents += sign * priceCents;
+    } else if (status === "noshow") {
+      noShows += sign;
+    }
+  };
+  contribute(prevStatus, -1);
+  contribute(nextStatus, 1);
+  return {
+    visits: Math.max(0, visits),
+    totalSpendCents: Math.max(0, totalSpendCents),
+    noShows: Math.max(0, noShows),
+  };
+}
+
 export async function setAppointmentStatus(
   tenantId: string,
   id: string,
   status: AppointmentStatus,
 ): Promise<AppointmentDetail | undefined> {
+  // Read the row first so we can compute the client-stat delta for this
+  // transition before writing the new status.
+  const rows = await db()
+    .select()
+    .from(appointments)
+    .where(and(eq(appointments.tenantId, tenantId), eq(appointments.id, id)))
+    .limit(1);
+  const row = rows[0];
+  if (!row) return undefined;
+
+  if (row.status !== status) {
+    const clientRows = await db()
+      .select()
+      .from(clients)
+      .where(and(eq(clients.tenantId, tenantId), eq(clients.id, row.clientId)))
+      .limit(1);
+    const client = clientRows[0];
+    if (client) {
+      const next = applyDelta(row.status, status, client, row.priceCents);
+      await db()
+        .update(clients)
+        .set({
+          visits: next.visits,
+          totalSpendCents: next.totalSpendCents,
+          noShows: next.noShows,
+        })
+        .where(and(eq(clients.tenantId, tenantId), eq(clients.id, row.clientId)));
+    }
+  }
+
   await db()
     .update(appointments)
     .set({ status })
